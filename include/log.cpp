@@ -1,3 +1,6 @@
+#include <string>
+#include <sstream>
+using namespace std;
 // Log, version 0.1: a simple logging class
 enum TLogLevel {logERROR, logWARNING, logINFO, logDEBUG, logDEBUG1,
 logDEBUG2, logDEBUG3, logDEBUG4};
@@ -19,8 +22,6 @@ private:
 };
 std::ostringstream& Log::Get(TLogLevel level)
 {
-   os << "- " << NowTime();
-   os << " " << ToString(level) << ": ";
    os << std::string(level > logDEBUG ? 0 : level - logDEBUG, '\t');
    messageLevel = level;
    return os;
