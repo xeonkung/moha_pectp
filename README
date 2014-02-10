@@ -1,0 +1,20 @@
+The files contained in this directory are the timetabling library files for 
+the implementation of the first phase, with a crossover and mutation function 
+added to the Solution class, plus a main file ga.cpp implementing a basic 
+version of EA. The Makefile creates an executable file timetabling.ga.uk.1. 
+This has to be run with the parameters -i [instance name] -t [total time] 
+-p [type of instance]. The parameter -p (1, 2, and 3 respectively for the easy, 
+medium and hard instances) sets the parameter maxSteps for the local search to 
+200, 1000, and 2000 respectively.
+A brief description of the EA follows.
+
+Evolutionary algorithm implemented for the Metaheuristics Network 
+first phase on Timetabling:
+
+Steady-state GA. Population size 10. Tournament selection 
+with tornament of size 5. Replace worst replacement policy. Crossover 
+rate 0.8. Uniform crossover. Mutation is a random move and it is applied 
+with probability 0.5. Local search at each generation makes it a Lamarckian 
+GA or a memetic algorithm. No other problem specific knowledge or heuristic 
+used. 
+
