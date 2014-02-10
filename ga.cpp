@@ -56,19 +56,8 @@ bool compareSolution(Solution * sol1, Solution * sol2)
 int main( int argc, char** argv) {
 
   Control control(argc, argv);
-
-  int problemType = control.getProblemType(); 
   int popSize = 10;
-  int maxSteps;
-  if (problemType == 1){
-    maxSteps = 200;
-  }  
-  else if (problemType == 2) { 
-    maxSteps = 1000;
-  }
-  else{
-    maxSteps = 2000;
-  }
+  int maxSteps = control.getMaxSteps();
   
   Problem *problem = new Problem(control.getInputStream());
 
@@ -77,7 +66,7 @@ int main( int argc, char** argv) {
   while( control.triesLeft()){
     control.beginTry();
 
-    int generation = 0;
+    control.gen = 0;
 
     Solution* pop[popSize];
 
@@ -169,12 +158,11 @@ int main( int argc, char** argv) {
       child->computePenalty();
       //cout << "Child " << child->penalty << endl; 
       //cout<< "Parent1 "<< parent1->penalty<< " Parent2 " << parent2->penalty<<endl;
-      generation ++;
+      control.gen ++;
       // replace worst member of the population with offspring  
       //if(child->penalty < pop[popSize - 1]->penalty){
 	pop[popSize - 1]->copy(child);
 	sort(pop, pop + popSize, compareSolution);
-	//cout<< "generation " << generation << endl;
 	control.setCurrentCost(pop[0]);
 	//}
       // replace if better

@@ -18,7 +18,7 @@
 #include "util.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 
 double ** DoubleMatrixAlloc(int nrows, int ncol)
 {

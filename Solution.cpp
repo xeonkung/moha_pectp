@@ -452,7 +452,7 @@ void Solution::randomMove()
   }
 }
 
-void Solution::localSearch(int maxSteps, double LS_limit = 999999, double prob1 = 1.0, double prob2 = 1.0, double prob3 = 0.0)
+void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double prob2, double prob3)
 {
   // perform local search with given time limit and probabilities for each type of move
   timer.resetTime(); // reset time counter for the local search
@@ -788,7 +788,7 @@ void Solution::assignRooms(int t)
 	sln[timeslot_events[t][i]].second = j;
 	// cout << "room " << j << endl;
 	assigned[i] = 1;
-	busy[j] =+ 1;
+	busy[j] += 1;
       }
     }
   }

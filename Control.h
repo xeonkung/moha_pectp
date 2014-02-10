@@ -31,14 +31,16 @@ private:
 	int maxSteps;
 	double LS_limit;
 	double prob1, prob2, prob3;
-
+        int gen_limit;
+        
 	ostream *os;
 	istream *is;
 	
 public:
 	Control( int, char** ); // construct a control object, given a set of command line options
 	~Control();
-	
+        
+	int gen;
 	bool parameterExists( string ); // check whether a certain parameter is given at the command line
 	int getIntParameter( string ); // get the integer contents of a parameter
 	double getDoubleParameter( string ); // get the double contents of a parameter
@@ -46,7 +48,7 @@ public:
 	
 	void resetTime(); // reset the timer
 	double getTime(); // get the timer's time
-	bool timeLeft() { return ( getTime() < timeLimit ); }; // check whether our run has time left
+	bool timeLeft() { return ( getTime() < timeLimit && gen < gen_limit); }; // check whether our run has time left
 	
 	void beginTry(); // begin a run
 	void endTry(Solution*); // end a run

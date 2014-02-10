@@ -18,8 +18,8 @@
 
 #ifndef UTIL_H
 #define UTIL_H
-
 #include <vector>
+using namespace std;
 
 double** DoubleMatrixAlloc(int nrows, int ncol);
 int** IntMatrixAlloc(int nrows, int ncol);

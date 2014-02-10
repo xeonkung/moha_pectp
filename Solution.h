@@ -57,7 +57,7 @@ class Solution{
   void Move2(int e1,int e2); // swaps events e1 and e2 (type 2 move)
   void Move3(int e1, int e2, int e3); // 3-cycle permutation of events e1, e2 and e3 (type 3 move)
   void randomMove(); // do one of the three possible moves for random events and timeslots
-  void localSearch(int maxSteps, double LS_limit = 999999, double prob1 = 1.0, double prob2 = 1.0, double prob3 = 0.0);//apply local search with the given parameters
+  void localSearch(int maxSteps, double LS_limit = 999999, double prob1 = 1.0, double prob2 = 1.0, double prob3 = 1.0);//apply local search with the given parameters
   void assignRooms(int t); // assign rooms to events for timeslot t (first apply matching algorithm and then assign unplaced rooms)
   int computePenalty();
   void crossover(Solution* parent1, Solution* parent2); 

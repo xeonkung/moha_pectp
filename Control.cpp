@@ -110,8 +110,8 @@ Control::Control( int argc, char** argv ) {
 		prob3 = getDoubleParameter( "-p3" );
 		cout <<"LS move 3 probability " << prob3 <<  endl;
 	} else {
-		cerr << "Warning: The local search move 3 probability is set to default 0.0" << endl;
-		prob3 = 0.0; // default local search probability for each move to be performed
+		cerr << "Warning: The local search move 3 probability is set to default 1.0" << endl;
+		prob3 = 1.0; // default local search probability for each move to be performed
 	}
 
 	// check for random seed
@@ -123,6 +123,14 @@ Control::Control( int argc, char** argv ) {
 		seed = time( NULL );
 		cerr << "Warning: " << seed << " used as default random seed" << endl;
 		srand( seed );
+	}
+        
+        if( parameterExists( "-g" ) ) {
+		gen_limit = getIntParameter( "-g" );
+		cout <<"Local search gen limit " << gen_limit << endl;
+	} else {
+                gen_limit = 99999;
+		cerr << "Warning: The local search gen limit is set to default (" << gen_limit << " gen)" << endl;
 	}
 }
 
@@ -183,11 +191,13 @@ Control::beginTry() {
 	feasible = false;
 	bestScv = INT_MAX;
 	bestEvaluation = INT_MAX;
+        gen = 0;
 }
 
 void
 Control::endTry( Solution *bestSolution) {
   (*os) << "begin solution " << nrTry << endl;
+  (*os) << "total time : " << getTime() << " / gen : " << gen << endl;
   if(bestSolution->feasible){
     (*os) << "feasible: evaluation function = " << bestSolution->scv <<endl;
     for(int i = 0; i < (*bestSolution).data->n_of_events; i++)

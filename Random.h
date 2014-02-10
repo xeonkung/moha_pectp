@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <vector>
 #include <stdlib.h>
+#include <cassert>
+using namespace std;
 
 class Random {
 private:
