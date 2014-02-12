@@ -57,8 +57,7 @@ int main( int argc, char** argv) {
 
   Control control(argc, argv);
   int popSize = 10;
-  int maxSteps = control.getMaxSteps();
-  
+    
   Problem *problem = new Problem(control.getInputStream());
 
   rnd = new Random((unsigned) control.getSeed());
@@ -73,7 +72,7 @@ int main( int argc, char** argv) {
     for(int i=0; i < popSize; i++){
       pop[i] = new Solution(problem, rnd);
       pop[i]->RandomInitialSolution();
-      pop[i]->localSearch(maxSteps);
+      pop[i]->localSearch(control.getMaxSteps(), control.getLS_limit(), control.getProb1(), control.getProb2(), control.getProb3());
       pop[i]->computePenalty();
       //cout<< pop[i]->penalty<<endl;
     }   
@@ -152,7 +151,7 @@ int main( int argc, char** argv) {
       }
      
       //apply local search to offspring
-      child->localSearch(maxSteps);
+      child->localSearch(control.getMaxSteps(), control.getLS_limit(), control.getProb1(), control.getProb2(), control.getProb3());
       
       //evaluate the offspring
       child->computePenalty();

@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "Random.h"
+#include <cassert>
 #include <stdio.h>
 #define VERBOSE(x) x
 #define VERYVERBOSE(x)

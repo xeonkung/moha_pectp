@@ -1,5 +1,5 @@
 #include "Control.h"
-
+#include <limits.h>
 Control::Control( int argc, char** argv ) {
 
 	// parse the command line options to set all vars
@@ -46,12 +46,19 @@ Control::Control( int argc, char** argv ) {
 		cerr << "Warning: Number of tries is set to default (10)" << endl;
 		maxTry = 10; // default number of tries
 	}
-
+        if( parameterExists( "-g" ) ) {
+		limitGen = getIntParameter( "-g" );
+		cout << "Max number of gens " << limitGen << endl;
+	} else {
+                limitGen = 100000;
+		cerr << "Warning: Number of gens is set to default " << limitGen << endl;
+	}
+        gen = 0;
 	// check for time limit parameter
 	
 	if( parameterExists( "-t" ) ) {
 		timeLimit = getDoubleParameter( "-t" );
-		cout <<"Time limit " << timeLimit << endl;
+		cout << "Time limit " << timeLimit << endl;
 	} else {
 		cerr << "Warning: Time limit is set to default (90 sec)" << endl;
 		timeLimit = 90; // default time limit
@@ -67,7 +74,14 @@ Control::Control( int argc, char** argv ) {
 		problemType = 1; // default problem type
 	}
 
-
+        if( parameterExists( "-alfa" ) ) {
+		alfa = getDoubleParameter( "-alfa" );
+		cout << "Tabu list length factor " << alfa <<endl;
+	} else {
+		cerr << "Warning: The tabu list length factor is set to default 0.01" << endl;
+		alfa = 0.01; // default local search probability for each move of type 1 to be performed
+	}
+        
         // check for maximum steps parameter for the local search
 	
 	if( parameterExists( "-m" ) ) {
@@ -110,8 +124,8 @@ Control::Control( int argc, char** argv ) {
 		prob3 = getDoubleParameter( "-p3" );
 		cout <<"LS move 3 probability " << prob3 <<  endl;
 	} else {
-		cerr << "Warning: The local search move 3 probability is set to default 1.0" << endl;
-		prob3 = 1.0; // default local search probability for each move to be performed
+		cerr << "Warning: The local search move 3 probability is set to default 0.0" << endl;
+		prob3 = 0.0; // default local search probability for each move to be performed
 	}
 
 	// check for random seed
@@ -123,14 +137,6 @@ Control::Control( int argc, char** argv ) {
 		seed = time( NULL );
 		cerr << "Warning: " << seed << " used as default random seed" << endl;
 		srand( seed );
-	}
-        
-        if( parameterExists( "-g" ) ) {
-		gen_limit = getIntParameter( "-g" );
-		cout <<"Local search gen limit " << gen_limit << endl;
-	} else {
-                gen_limit = 99999;
-		cerr << "Warning: The local search gen limit is set to default (" << gen_limit << " gen)" << endl;
 	}
 }
 
@@ -197,7 +203,7 @@ Control::beginTry() {
 void
 Control::endTry( Solution *bestSolution) {
   (*os) << "begin solution " << nrTry << endl;
-  (*os) << "total time : " << getTime() << " / gen : " << gen << endl;
+  (*os) << "total time: " << getTime() << " gen: " << gen << endl;
   if(bestSolution->feasible){
     (*os) << "feasible: evaluation function = " << bestSolution->scv <<endl;
     for(int i = 0; i < (*bestSolution).data->n_of_events; i++)
@@ -225,22 +231,23 @@ void
 Control::setCurrentCost(Solution *currentSolution ) {
   //if( timeLeft() ) {
 	  int currentScv = currentSolution->scv;
+          gen++;
 	  if( currentSolution->feasible && currentScv < bestScv ) {
 	    bestScv = currentScv;
 	    bestEvaluation = currentScv;
 	    double time = getTime();
 	    (*os) << "best " << bestScv << " time ";
-			os->flags( ios::fixed );
-			(*os) << ( time < 0 ? 0.0 : time ) << endl;
+            os->flags( ios::fixed );
+            (*os) << ( time < 0 ? 0.0 : time ) << " gen: " << gen << endl;
 	  }
 	  else if(!currentSolution->feasible){ 
 	    int currentEvaluation = (currentSolution->computeHcv() * 1000000 + currentSolution->computeScv()) ;
 	    if(currentEvaluation < bestEvaluation){
 	      bestEvaluation = currentEvaluation;
 	      double time = getTime();
-	    (*os) << "best " << bestEvaluation << " time ";
-			os->flags( ios::fixed );
-			(*os) << ( time < 0 ? 0.0 : time ) << endl;
+	      (*os) << "best " << bestEvaluation << " time ";
+	      os->flags( ios::fixed );
+	      (*os) << ( time < 0 ? 0.0 : time ) << " gen: " << gen << endl;
 	    }
 	  }
 	  //}

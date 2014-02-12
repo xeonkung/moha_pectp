@@ -18,9 +18,9 @@
 
 #ifndef UTIL_H
 #define UTIL_H
+#include <stdlib.h>
 #include <vector>
 using namespace std;
-
 double** DoubleMatrixAlloc(int nrows, int ncol);
 int** IntMatrixAlloc(int nrows, int ncol);
 long int** LongIntMatrixAlloc(int nrows, int ncol);

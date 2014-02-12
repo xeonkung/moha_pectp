@@ -13,7 +13,7 @@
 #include <fstream>
 #include "Solution.h"
 #include "Timer.h"
-#include <limits.h>
+
 
 class Control {
 private:
@@ -31,16 +31,15 @@ private:
 	int maxSteps;
 	double LS_limit;
 	double prob1, prob2, prob3;
-        int gen_limit;
-        
+        int tsMaxSteps;
 	ostream *os;
 	istream *is;
+        int gen, limitGen;
 	
 public:
 	Control( int, char** ); // construct a control object, given a set of command line options
 	~Control();
-        
-	int gen;
+	double alfa;
 	bool parameterExists( string ); // check whether a certain parameter is given at the command line
 	int getIntParameter( string ); // get the integer contents of a parameter
 	double getDoubleParameter( string ); // get the double contents of a parameter
@@ -48,7 +47,7 @@ public:
 	
 	void resetTime(); // reset the timer
 	double getTime(); // get the timer's time
-	bool timeLeft() { return ( getTime() < timeLimit && gen < gen_limit); }; // check whether our run has time left
+	bool timeLeft() { return ( getTime() < timeLimit && gen < limitGen ); }; // check whether our run has time left
 	
 	void beginTry(); // begin a run
 	void endTry(Solution*); // end a run
@@ -67,6 +66,8 @@ public:
 	double getProb1() { return prob1;} // get the probability to be performed for each move of type 1 in the local search
 	double getProb2() { return prob2;} // get the probability for each move of type 2 in the local search
 	double getProb3() { return prob3;} // get the probability for each move of type 3 in the local search  
+        
+        int getTS_maxSteps() {return tsMaxSteps;}
 };
 
 #endif

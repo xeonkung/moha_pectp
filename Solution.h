@@ -21,10 +21,11 @@
 #include "Problem.h"
 #include "Timer.h"
 #include "Random.h"
-
+#include "move.h"
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <limits.h>
 
 // a solution is a list of event assignments to timeslots and rooms
 // stored in a vector of pairs of integers, one for each event,
@@ -57,12 +58,17 @@ class Solution{
   void Move2(int e1,int e2); // swaps events e1 and e2 (type 2 move)
   void Move3(int e1, int e2, int e3); // 3-cycle permutation of events e1, e2 and e3 (type 3 move)
   void randomMove(); // do one of the three possible moves for random events and timeslots
-  void localSearch(int maxSteps, double LS_limit = 999999, double prob1 = 1.0, double prob2 = 1.0, double prob3 = 1.0);//apply local search with the given parameters
+  void localSearch(int maxSteps, double LS_limit = 999999, double prob1 = 1.0, double prob2 = 1.0, double prob3 = 0.0);//apply local search with the given parameters
   void assignRooms(int t); // assign rooms to events for timeslot t (first apply matching algorithm and then assign unplaced rooms)
   int computePenalty();
   void crossover(Solution* parent1, Solution* parent2); 
   void mutation();
-   
+  
+  void tabuSearch(double timeLimit, double a, double prob1 = 1.0, double prob2 = 1.0);
+  bool tabu(move m, int *tabuList,double alfa, int iterCount);
+  void setTabu(move m, int *tabuList, int iterCount);
+  void LS2(int maxSteps, double LS_limit = 999999, double prob1 = 1.0);
+  
  private:
   // data structure for the matching algorithm
   int** size; 
@@ -79,6 +85,8 @@ class Solution{
   int singleClassesScv(int e); // evaluate the number of single classes that event e actually solves in the day (or created if e leaves its timeslot)
   void maxMatching(int V);    // do the max cardinality matching using a deterministic network flow algorithm
   bool networkFlow(int V);  // network flow algorithm
+  vector<int> suffle(vector<int> source);
+  
 };
 
 #endif

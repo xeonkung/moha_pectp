@@ -18,16 +18,17 @@
 #ifndef PROBLEM_H
 #define PROBLEM_H
 
+#include <stdlib.h>
 #include <vector>
 #include <map>
 #include <iostream>
 #include <fstream>
-#include <stdlib.h>
+
 #include "util.h"
 
 #include <vector>
 #include <map>
-using namespace std;
+
 class Problem {
  public:
 
