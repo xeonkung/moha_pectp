@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "Control.h"
 #include "Problem.h"
 #include "Solution.h"
@@ -6,7 +8,7 @@
 
 #include <list>
 #include <vector>
-
+using namespace std;
 Random* rnd;
 
 /*class compareSolution{
@@ -56,8 +58,20 @@ bool compareSolution(Solution * sol1, Solution * sol2)
 int main( int argc, char** argv) {
 
   Control control(argc, argv);
+
+  int problemType = control.getProblemType(); 
   int popSize = 10;
-    
+  int maxSteps;
+  if (problemType == 1){
+    maxSteps = 200;
+  }  
+  else if (problemType == 2) { 
+    maxSteps = 1000;
+  }
+  else{
+    maxSteps = 2000;
+  }
+  
   Problem *problem = new Problem(control.getInputStream());
 
   rnd = new Random((unsigned) control.getSeed());
@@ -65,14 +79,16 @@ int main( int argc, char** argv) {
   while( control.triesLeft()){
     control.beginTry();
 
-    control.gen = 0;
+    int generation = 0;
 
     Solution* pop[popSize];
 
     for(int i=0; i < popSize; i++){
       pop[i] = new Solution(problem, rnd);
       pop[i]->RandomInitialSolution();
-      pop[i]->localSearch(control.getMaxSteps(), control.getLS_limit(), control.getProb1(), control.getProb2(), control.getProb3());
+      pop[i]->localSearch(maxSteps, control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
+      //pop[i]->LS2(maxSteps, control.getTimeLimit());
+      //pop[i]->tabuSearch(10, control.alfa);
       pop[i]->computePenalty();
       //cout<< pop[i]->penalty<<endl;
     }   
@@ -87,49 +103,6 @@ int main( int argc, char** argv) {
     control.setCurrentCost(pop[0]);
 
     while(control.timeLeft()){
-
-      /* 
-      int loop;
-      int elite = 5;
-      double cross_rate = 0.5;
-
-      Solution* newpop[popSize];
-      for(int i=0; i < popSize; i++)
-	newpop[i] = new Solution(problem, rnd);
-
-      for(loop=0; loop < elite; loop++){
-	newpop[loop]->copy(pop[loop]);
-	newpop[loop]->localSearch(control.getMaxSteps());
-	newpop[loop]->computePenalty();
-      }
-      for (; loop < popSize;) {
-	Solution*parent1 = selection(pop, popSize);
-	Solution*parent2 = selection(pop, popSize);
-	if (rnd->next() <= cross_rate) {
-
-	  newpop[loop]->crossover(parent1, parent2);
-
-	  // do some mutation 
-	  newpop[loop]->mutation();
-
-	  newpop[loop]->localSearch(control.getMaxSteps());
-	  newpop[loop]->computePenalty();
-
-	} else {
-	  newpop[loop]->copy(parent1);
-	  newpop[loop]->localSearch(control.getMaxSteps());
-	  newpop[loop]->computePenalty();
-	}
-	loop++;
-      }
-      for(int i = 0; i < popSize; i++){
-	pop[i]->copy(newpop[i]);
-	delete newpop[i];
-      }
-
-      sort(pop ,pop + popSize-1, compareSolution); 
-      control.setCurrentCost(pop[0]);
-      */
 
       // start reproduction (steady-state GA)
       Solution* child= new Solution(problem,rnd);
@@ -151,17 +124,20 @@ int main( int argc, char** argv) {
       }
      
       //apply local search to offspring
-      child->localSearch(control.getMaxSteps(), control.getLS_limit(), control.getProb1(), control.getProb2(), control.getProb3());
       
+      child->localSearch(maxSteps, control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());      
+      //child->LS2(maxSteps, control.getTimeLimit());
+      //child->tabuSearch(10, control.alfa);
       //evaluate the offspring
       child->computePenalty();
       //cout << "Child " << child->penalty << endl; 
       //cout<< "Parent1 "<< parent1->penalty<< " Parent2 " << parent2->penalty<<endl;
-      control.gen ++;
+      generation ++;
       // replace worst member of the population with offspring  
       //if(child->penalty < pop[popSize - 1]->penalty){
 	pop[popSize - 1]->copy(child);
 	sort(pop, pop + popSize, compareSolution);
+	//cout<< "generation " << generation << endl;
 	control.setCurrentCost(pop[0]);
 	//}
       // replace if better
@@ -180,7 +156,7 @@ int main( int argc, char** argv) {
       // sort the new pop
 	
       delete child; 
-    }
+    }    
     control.endTry(pop[0]);
 
     // remember to delete the population

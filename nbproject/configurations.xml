@@ -13,6 +13,7 @@
       <in>Timer.C</in>
       <in>Timer.h</in>
       <in>ga.cpp</in>
+      <in>move.h</in>
       <in>util.cpp</in>
       <in>util.h</in>
     </df>
