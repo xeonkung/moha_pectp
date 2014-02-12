@@ -61,16 +61,6 @@ int main( int argc, char** argv) {
 
   int problemType = control.getProblemType(); 
   int popSize = 10;
-  int maxSteps;
-  if (problemType == 1){
-    maxSteps = 200;
-  }  
-  else if (problemType == 2) { 
-    maxSteps = 1000;
-  }
-  else{
-    maxSteps = 2000;
-  }
   
   Problem *problem = new Problem(control.getInputStream());
 
@@ -86,7 +76,7 @@ int main( int argc, char** argv) {
     for(int i=0; i < popSize; i++){
       pop[i] = new Solution(problem, rnd);
       pop[i]->RandomInitialSolution();
-      pop[i]->localSearch(maxSteps, control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
+      pop[i]->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
       //pop[i]->LS2(maxSteps, control.getTimeLimit());
       //pop[i]->tabuSearch(10, control.alfa);
       pop[i]->computePenalty();
@@ -125,7 +115,7 @@ int main( int argc, char** argv) {
      
       //apply local search to offspring
       
-      child->localSearch(maxSteps, control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());      
+      child->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());      
       //child->LS2(maxSteps, control.getTimeLimit());
       //child->tabuSearch(10, control.alfa);
       //evaluate the offspring

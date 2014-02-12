@@ -124,8 +124,8 @@ Control::Control( int argc, char** argv ) {
 		prob3 = getDoubleParameter( "-p3" );
 		cout <<"LS move 3 probability " << prob3 <<  endl;
 	} else {
-		cerr << "Warning: The local search move 3 probability is set to default 0.0" << endl;
-		prob3 = 0.0; // default local search probability for each move to be performed
+		cerr << "Warning: The local search move 3 probability is set to default 1.0" << endl;
+		prob3 = 1.0; // default local search probability for each move to be performed
 	}
 
 	// check for random seed
