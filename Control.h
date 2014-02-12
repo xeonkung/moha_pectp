@@ -11,6 +11,7 @@
 #include <map>
 #include <iostream>
 #include <fstream>
+#include <limits>
 #include "Solution.h"
 #include "Timer.h"
 
