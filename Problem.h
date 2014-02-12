@@ -23,7 +23,7 @@
 #include <map>
 #include <iostream>
 #include <fstream>
-
+#include <stdlib.h>
 #include "util.h"
 
 #include <vector>
