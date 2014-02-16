@@ -58,9 +58,8 @@ bool compareSolution(Solution * sol1, Solution * sol2)
 int main( int argc, char** argv) {
 
   Control control(argc, argv);
-
-  int problemType = control.getProblemType(); 
   int popSize = 50;
+  int maxSteps = control.getMaxSteps();
   
   Problem *problem = new Problem(control.getInputStream());
 

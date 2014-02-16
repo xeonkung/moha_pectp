@@ -14,7 +14,7 @@
 #include <limits.h>
 #include "Solution.h"
 #include "Timer.h"
-
+#include <limits.h>
 
 class Control {
 private:
