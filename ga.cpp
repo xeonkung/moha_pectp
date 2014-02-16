@@ -60,7 +60,7 @@ int main( int argc, char** argv) {
   Control control(argc, argv);
 
   int problemType = control.getProblemType(); 
-  int popSize = 10;
+  int popSize = 50;
   
   Problem *problem = new Problem(control.getInputStream());
 
@@ -81,7 +81,7 @@ int main( int argc, char** argv) {
       //pop[i]->tabuSearch(10, control.alfa);
       pop[i]->computePenalty();
       //cout<< pop[i]->penalty<<endl;
-    }   
+    }
    
     // sort the population by penalty
     sort(pop, pop + popSize, compareSolution);
@@ -98,8 +98,8 @@ int main( int argc, char** argv) {
       Solution* child= new Solution(problem,rnd);
 
       // select parents
-      Solution* parent1 = selection5(pop, popSize);
-      Solution* parent2 = selection5(pop, popSize);
+      Solution* parent1 = selection(pop, popSize);
+      Solution* parent2 = selection(pop, popSize);
 
       // generate child
       if(rnd->next() < 0.8)
