@@ -875,12 +875,18 @@ void Solution::crossover(Solution* parent1, Solution* parent2){
 
 	// assign some timeslots from the first parent and some from the second
 	for(int i = 0; i < data->n_of_events; i++){
-		if(rg->next()<0.5)
-			sln[i].first = parent1->sln[i].first;
-		else
-			sln[i].first = parent2->sln[i].first;
-
-		timeslot_events[sln[i].first].push_back(i);
+            if(parent1->eventHcv(i) < parent2->eventHcv(i)){
+                sln[i].first = parent1->sln[i].first;
+            }else if(parent2->eventHcv(i) < parent1->eventHcv(i)) {
+                sln[i].first = parent2->sln[i].first;
+            }else{
+                if (parent1->eventScv(i) < parent2->eventScv(i)){
+                    sln[i].first = parent1->sln[i].first;
+                }else{
+                    sln[i].first = parent2->sln[i].first;
+                }
+            }
+            timeslot_events[sln[i].first].push_back(i);
 	}
 	// and assign rooms to events in each non-empty timeslot
 	for(int j = 0; j < 45; j++){
