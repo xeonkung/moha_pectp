@@ -25,6 +25,9 @@ void Solution::copy(Solution *orig)
 	timeslot_events = orig->timeslot_events;
 	feasible = orig->feasible;
 	scv = orig->scv;
+        for(int i = 0; i < obj_N; i ++) {
+            objective[i] = orig->objective[i];
+        }
 	hcv = orig->hcv;
 	penalty = orig->penalty; 
 }
@@ -73,10 +76,14 @@ int Solution::computeScv()
 	bool attendsTimeslot;
 
 	scv = 0; // set soft constraint violations to zero to start with
-
+        for(int i = 0; i < obj_N; i ++) {
+            objective[i] = 0;
+        }
 	for(int i = 0; i < data->n_of_events; i++){ // classes should not be in the last slot of the day
-		if( sln[i].first%9 == 8 )
-			scv += data->studentNumber[i];  // one penalty for each student attending such a class
+		if( sln[i].first%9 == 8 ) {                    
+                    scv += data->studentNumber[i];  // one penalty for each student attending such a class
+                    objective[0] += data->studentNumber[i];
+                }
 	}
 
 	for (int j = 0; j < data->n_of_students; j++) { // students should not have more than two classes in a row
@@ -92,6 +99,7 @@ int Solution::computeScv()
 					consecutiveClasses = consecutiveClasses + 1;
 					if (consecutiveClasses > 2) {
 						scv = scv + 1;
+                                                objective[1] += 1;
 					}
 					break;
 				}
@@ -116,6 +124,7 @@ int Solution::computeScv()
 			}  
 			if (classesDay == 1) {
 				scv = scv + 1;
+                                objective[2] += 1;
 			}
 		}
 	}

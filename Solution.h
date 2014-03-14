@@ -44,7 +44,11 @@ class Solution{
   int scv;   // keeps the number of soft constraint violations (ComputeScv() has to be called)
   int hcv;  // keeps the number of hard constraint violations (computeHcv() has to be called)
   int penalty; // scv if solution is feasible, 999999 + hcv otherwise 
-
+  // edit for moga
+  const int obj_N = 3;
+  int objective[obj_N];
+  int rank;
+  double distance;
   Solution(Problem* pd, Random* rnd); //constructor with pointers to the problem data and to the random object 
 
   void RandomInitialSolution(); // produce a random initial solution

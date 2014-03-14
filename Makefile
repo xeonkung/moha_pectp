@@ -1,11 +1,11 @@
-TARGET = ga.original
+TARGET = nsga
 CXXFLAGS = -Wall -ansi -O3
 
-OBJS = Problem.o Solution.o Random.o Timer.o Control.o util.o
+OBJS = Problem.o Solution.o Random.o Timer.o Control.o util.o Distance.o Ranking.o
 
 all: ${TARGET}
 
-ga.original: ga.cpp $(OBJS)
+nsga: ga.cpp $(OBJS)
 	${CXX} ${CXXFLAGS} -o $@ $^
 
 clean:
