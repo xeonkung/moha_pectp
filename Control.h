@@ -14,6 +14,7 @@
 #include <limits.h>
 #include "Solution.h"
 #include "Timer.h"
+#include "Ranking.h"
 
 
 class Control {
@@ -52,7 +53,7 @@ public:
 	
 	void beginTry(); // begin a run
 	void endTry(Solution*); // end a run
-	
+	void endTry(VectorSolution);
 	void setCurrentCost(Solution* ); // tell control the quality of your solution
 	
 	istream& getInputStream() { return *is; } // get the input stream for constructing problems

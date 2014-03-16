@@ -28,6 +28,8 @@ void Solution::copy(Solution *orig)
         for(int i = 0; i < obj_N; i ++) {
             objective[i] = orig->objective[i];
         }
+        distance = orig->distance;
+        rank = orig->rank;
 	hcv = orig->hcv;
 	penalty = orig->penalty; 
 }
@@ -154,12 +156,10 @@ int Solution::computeHcv()
 
 int Solution::computePenalty()
 {
-	if(computeFeasibility())
-		penalty = computeScv();
-	else
-		penalty = 1000000 + computeHcv();
-
-	return penalty;
+    computeFeasibility();
+    penalty = computeScv();
+    penalty += 1000000 * computeHcv();
+    return penalty;
 }
 
 //compute hard constraint violations involving event e

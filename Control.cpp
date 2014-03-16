@@ -238,7 +238,7 @@ Control::setCurrentCost(Solution *currentSolution ) {
 	    double time = getTime();
 	    (*os) << "best " << bestScv << " time ";
             os->flags( ios::fixed );
-            (*os) << ( time < 0 ? 0.0 : time ) << " gen: " << gen << endl;
+            (*os) << ( time < 0 ? 0.0 : time ) << " gen: " << gen << "!!" << endl;
 	  }
 	  else if(!currentSolution->feasible){ 
 	    int currentEvaluation = (currentSolution->computeHcv() * 1000000 + currentSolution->computeScv()) ;
@@ -251,5 +251,26 @@ Control::setCurrentCost(Solution *currentSolution ) {
 	    }
 	  }
 	  //}
+}
+void Control::endTry(VectorSolution vs) {
+    (*os) << "begin solution " << nrTry << endl;
+    (*os) << "total time: " << getTime() << " gen: " << gen << endl;
+    int size = (int) vs.size();
+    (*os) << "Front 0" << endl;
+    for(int i = 0; i < size; i++){
+        (*os) << "soluation " << (i+1) << " = <";
+        for (int j = 0; j < Solution::obj_N; j++){
+            (*os) << vs[i]->objective[j] << ", ";
+        }
+        (*os) << ">" << endl;
+        for (int j = 0; j < vs[i]->data->n_of_events; j++)
+            (*os) << vs[i]->sln[j].first << " ";
+        (*os) << endl;
+        for (int j = 0; j < vs[i]->data->n_of_events; j++)
+            (*os) << vs[i]->sln[j].first << " ";
+        (*os) << endl;
+    }   
+    (*os) << "end solution " << nrTry << endl;
+    (*os) << "end try " << nrTry << endl;
 }
 

@@ -28,7 +28,7 @@
 
 #include <vector>
 #include <map>
-
+using namespace std;
 class Problem {
  public:
 

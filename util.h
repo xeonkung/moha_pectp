@@ -20,7 +20,6 @@
 #define UTIL_H
 #include <stdlib.h>
 #include <vector>
-#include "Solution.h"
 using namespace std;
 double** DoubleMatrixAlloc(int nrows, int ncol);
 int** IntMatrixAlloc(int nrows, int ncol);

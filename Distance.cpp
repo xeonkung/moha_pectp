@@ -19,7 +19,7 @@ Distance::~Distance() {
 void Distance::crowdingDistanceAssignment(VectorSolution vSolution) {
     int size = vSolution.size();
     if(size == 0) return;
-    const double inf = numeric_limits<double>.max();
+    const double inf = numeric_limits<double>::max();
     if(size == 1) {
         vSolution[0]->distance = inf;
         return;
@@ -32,11 +32,11 @@ void Distance::crowdingDistanceAssignment(VectorSolution vSolution) {
     for(int i = 0; i < size; i++) {
         vSolution[i]->distance = 0.0;
     }
-    ObjectiveCmp objCmp;
+    
     double min, max, dist;
-    for(int i = 0; i < Solution.obj_N; i++) {
-        objCmp.obj_i = i;
-        sort(vSolution.begin(), vSolution.end(), objCmp);
+    for(int i = 0; i < Solution::obj_N; i++) {
+        ObjectiveCmp objCmp(i);
+        //sort(vSolution.begin(), vSolution.end(), objCmp);
         min = vSolution[0]->objective[i];
         max = vSolution[size - 1]->objective[i];
         

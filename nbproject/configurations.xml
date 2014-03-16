@@ -4,10 +4,16 @@
     <df name="moha_pectp" root=".">
       <in>Control.cpp</in>
       <in>Control.h</in>
+      <in>Distance.cpp</in>
+      <in>Distance.h</in>
+      <in>ObjectiveCmp.cpp</in>
+      <in>ObjectiveCmp.h</in>
       <in>Problem.cpp</in>
       <in>Problem.h</in>
       <in>Random.cc</in>
       <in>Random.h</in>
+      <in>Ranking.cpp</in>
+      <in>Ranking.h</in>
       <in>Solution.cpp</in>
       <in>Solution.h</in>
       <in>Timer.C</in>
@@ -42,7 +48,7 @@
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath></executablePath>
+          <executablePath>nsga</executablePath>
         </makeTool>
       </makefileType>
     </conf>

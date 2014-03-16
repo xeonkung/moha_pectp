@@ -36,19 +36,20 @@ class Solution{
 
   vector<pair<int, int> > sln; // vector of (timeslot, room) assigned for each event
   map<int, vector<int> > timeslot_events; // for each timeslot a vector of events taking place in it
-  Problem* data; // a pointer to the problem data
+  Problem * data; // a pointer to the problem data
   Timer timer;
-  Random* rg;
+  Random * rg;
 
   bool feasible;
   int scv;   // keeps the number of soft constraint violations (ComputeScv() has to be called)
   int hcv;  // keeps the number of hard constraint violations (computeHcv() has to be called)
   int penalty; // scv if solution is feasible, 999999 + hcv otherwise 
   // edit for moga
-  const int obj_N = 3;
+  static const int obj_N = 3;;
   int objective[obj_N];
   int rank;
   double distance;
+  
   Solution(Problem* pd, Random* rnd); //constructor with pointers to the problem data and to the random object 
 
   void RandomInitialSolution(); // produce a random initial solution

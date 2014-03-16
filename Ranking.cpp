@@ -7,11 +7,13 @@
 
 #include "Ranking.h"
 
-Ranking::Ranking(VectorSolution pop) {
-    int popSize = pop.size();
+Ranking::Ranking(VectorSolution p) {
+    pop = p;
+    const int popSize = (int)pop.size();
     int dominateMe[popSize];
-    vector<int> iDominate[popSize];
-    vector<int> front[popSize + 1];
+    //vector<int> iDominate[popSize];
+    vector<int>* iDominate = new vector<int>[popSize];
+    vector<int>* front = new vector<int>[popSize + 1];
     int flagDominate;
     
     for(int p = 0; p < popSize; p++) {
@@ -36,7 +38,7 @@ Ranking::Ranking(VectorSolution pop) {
     for(int p = 0; p < popSize; p++){
         if(dominateMe[p] == 0){
             front[0].push_back(p);
-            pop[p]->rank = 0;
+            pop[p]->rank = 0;                     
         }
     }
     int i = 0;
@@ -54,25 +56,26 @@ Ranking::Ranking(VectorSolution pop) {
             }
         }
     }
-    
+    Front = new VectorSolution[i+1];
     for (int j = 0; j < i; j++) {
-        Solution* x[front[j].size()];
-        for(int i = 0; i < front[j].size(); i++){
-            x[i] = pop[i];
+        for(int i = 0; i < (int)front[j].size(); i++){
+            Front[j].push_back(pop[front[j][i]]);
         }
-        Front.push_back(x);
     }
+    delete[] iDominate;
+    delete[] front;
 }
 
 Ranking::Ranking(const Ranking& orig) {
 }
 
 Ranking::~Ranking() {
+    delete[] Front;
 }
 
 int Ranking::compareDominateSolution(Solution* a, Solution* b){
     int val1, val2, dominate1 = 0, dominate2 = 0;
-    for(int i = 0; i < Solution.obj_N; i++) {
+    for(int i = 0; i < Solution::obj_N; i++) {
         val1 = a->objective[i];
         val2 = b->objective[i];
         if(val1 < val2){

@@ -9,17 +9,17 @@
 #define	RANKING_H
 
 #include "Solution.h"
+#include <tr1/array>
 typedef Solution** SolSet;
 typedef vector<Solution*> VectorSolution;
 class Ranking {
 public:
-    Ranking(VectorSolution pop);
+    Ranking(VectorSolution);
     Ranking(const Ranking& orig);
     virtual ~Ranking();
-    vector<SolSet> rank;
-    vector<VectorSolution> Front;
+    VectorSolution* Front;
+    VectorSolution pop;
 private:
-    SolSet _solutionSet;   
     int compareOverall(Solution* a, Solution* b);
     int compareDominateSolution(Solution* a, Solution* b);
 };
