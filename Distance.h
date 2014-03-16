@@ -10,6 +10,7 @@
 #include "Solution.h"
 #include "Ranking.h"
 #include "ObjectiveCmp.h"
+#include <limits>
 class Distance {
 public:
     Distance();
