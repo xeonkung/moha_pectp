@@ -236,7 +236,13 @@ Control::setCurrentCost(Solution *currentSolution ) {
 	    bestScv = currentScv;
 	    bestEvaluation = currentScv;
 	    double time = getTime();
-	    (*os) << "best " << bestScv << " time ";
+	    (*os) << "best " << bestScv;
+            (*os) << "<";
+            for (int j = 0; j < Solution::obj_N; j++){
+                (*os) << currentSolution->objective[j] << ", ";
+            }
+            (*os) << ">";
+            (*os) << " time ";
             os->flags( ios::fixed );
             (*os) << ( time < 0 ? 0.0 : time ) << " gen: " << gen << "!!" << endl;
 	  }

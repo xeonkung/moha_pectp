@@ -19,17 +19,23 @@ public:
   }*/
 
 Solution* selection(VectorSolution pop){
-    int popSize = pop.size();
+  int popSize = pop.size();
+  int flag;
   // tournament selection with tornament size 2
   int first, second;
   first = (int)(rnd->next()*popSize);
   second = (int)(rnd->next()*popSize);
   
-  if(pop[first]->penalty < pop[second]->penalty)
-      return(pop[first]);
-  else
-      return(pop[second]);
- 
+  if(pop[first]->rank < pop[second]->rank)
+      return pop[first];
+  else if (pop[first]->rank > pop[second]->rank)
+      return pop[second];
+  else{
+      if(pop[first]->distance < pop[second]->distance)
+          return pop[first];
+      else
+          return pop[second];
+  }
 }
 
 Solution* selection5(VectorSolution pop){
@@ -74,6 +80,52 @@ void printPOP(VectorSolution pop){
     cout << "#end pop" << endl;
 }
 
+VectorSolution rankSolution(VectorSolution pop, Problem* problem,Solution* child = 0){
+    int popSize = pop.size();
+    VectorSolution new_gen, front0;
+      for(int i=0; i < popSize; i++){
+        new_gen.push_back(new Solution(problem, rnd));
+        new_gen[i]->copy(pop[i]);
+      }
+    if(child != 0) new_gen.push_back(child);
+      Ranking rank (new_gen);
+      Distance distance;
+      int remain = popSize;
+      int s = 0,k,index = 0;
+      VectorSolution front = rank.Front[index];
+      while((remain > 0) && (remain >= (int)front.size())){
+          distance.crowdingDistanceAssignment(front);
+          for(k = 0; k < (int)front.size(); k ++){
+              pop[s]->copy(front[k]);
+              if(index == 0){
+                  front0.push_back(pop[s]);
+              }
+              s++;
+          }
+          remain -= front.size();
+          index++;
+          if (remain > 0){
+              front = rank.Front[index];
+          }
+      }
+      if(remain > 0){
+          distance.crowdingDistanceAssignment(front);
+          sort(front.begin(), front.end(), compareCrowding);
+          for(k = 0; k < remain; k ++){
+              pop[s]->copy(front[k]);
+              if(index == 0){
+                  front0.push_back(pop[s]);
+              }
+              s++;
+          }
+          remain = 0;         
+      }
+      for(int i = 0; i < (int)new_gen.size(); i++){
+          delete new_gen[i];
+      }
+      return front0;
+}
+
 int main( int argc, char** argv) {
 
   Control control(argc, argv);
@@ -91,13 +143,14 @@ int main( int argc, char** argv) {
     int generation = 0;
 
     VectorSolution pop;    
-    // Random generate soluation
+    // Random generate solution
     for(int i=0; i < popSize; i++){
       pop.push_back(new Solution(problem, rnd));
       pop[i]->RandomInitialSolution();
       pop[i]->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
       pop[i]->computePenalty();
-    }   
+    }
+    rankSolution(pop, problem);
     control.setCurrentCost(pop[0]);
     while(control.timeLeft()){
 
@@ -129,48 +182,7 @@ int main( int argc, char** argv) {
       child->computePenalty();
       generation++;
       //new_gen
-      VectorSolution new_gen;
-      for(int i=0; i < popSize; i++){
-        new_gen.push_back(new Solution(problem, rnd));
-        new_gen[i]->copy(pop[i]);
-      }
-      new_gen.push_back(child);
-      Ranking rank (new_gen);
-      Distance distance;
-      int remain = popSize;
-      int s = 0,k,index = 0;
-      VectorSolution front = rank.Front[index];
-      front0.clear();
-      while((remain > 0) && (remain >= (int)front.size())){
-          distance.crowdingDistanceAssignment(front);
-          for(k = 0; k < (int)front.size(); k ++){
-              pop[s]->copy(front[k]);
-              if(index == 0){
-                  front0.push_back(pop[s]);
-              }
-              s++;
-          }
-          remain -= front.size();
-          index++;
-          if (remain > 0){
-              front = rank.Front[index];
-          }
-      }
-      if(remain > 0){
-          distance.crowdingDistanceAssignment(front);
-          sort(front.begin(), front.end(), compareCrowding);
-          for(k = 0; k < remain; k ++){
-              pop[s]->copy(front[k]);
-              if(index == 0){
-                  front0.push_back(pop[s]);
-              }
-              s++;
-          }
-          remain = 0;         
-      }
-      for(int i = 0; i < (int)new_gen.size(); i++){
-          delete new_gen[i];
-      }      
+      front0 = rankSolution(pop, problem, child);
       control.setCurrentCost(pop[0]);
     }// while
     
