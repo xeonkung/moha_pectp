@@ -1143,7 +1143,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 				}//end for
 				if(foundbetter)
 				{
-					bestSolution->copy( this );
+					bestSolution->copy(this);
 					foundbetter = false;
 					continue;
 				}//end if
@@ -1278,4 +1278,12 @@ vector<int> Solution::suffle(vector<int> source) {
         }
     }
     return a;
+}
+
+bool Solution::equ(Solution* a){
+    for(int i = 0; i < data->n_of_events; i++){
+        if(sln[0] != a->sln[0] || sln[1] != a->sln[1])
+            return false;
+    }
+    return true;
 }

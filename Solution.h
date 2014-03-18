@@ -49,7 +49,7 @@ class Solution{
   int objective[obj_N];
   int rank;
   double distance;
-  
+  bool equ(Solution*);
   Solution(Problem* pd, Random* rnd); //constructor with pointers to the problem data and to the random object 
 
   void RandomInitialSolution(); // produce a random initial solution

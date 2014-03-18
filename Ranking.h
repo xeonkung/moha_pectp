@@ -25,4 +25,3 @@ private:
 };
 
 #endif	/* RANKING_H */
-
