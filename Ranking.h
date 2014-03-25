@@ -19,9 +19,8 @@ public:
     virtual ~Ranking();
     VectorSolution* Front;
     VectorSolution pop;
-private:
-    int compareOverall(Solution* a, Solution* b);
-    int compareDominateSolution(Solution* a, Solution* b);
+    static int compareOverall(Solution* a, Solution* b);
+    static int compareDominateSolution(Solution* a, Solution* b);
 };
 
 #endif	/* RANKING_H */

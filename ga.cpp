@@ -20,7 +20,6 @@ public:
 
 Solution* selection(VectorSolution pop){
   int popSize = pop.size();
-  int flag;
   // tournament selection with tornament size 2
   int first, second;
   first = (int)(rnd->next()*popSize);
@@ -125,7 +124,46 @@ VectorSolution rankSolution(VectorSolution pop, Problem* problem,Solution* child
       }
       return front0;
 }
-
+void pushToAchieve(Solution* a, VectorSolution achieve, int size, Problem* pb){
+    // a isn't in Rank = 0
+    if(a->rank != 0)
+        return;
+    vector<int> dominate;
+    for(int i = 0; i < (int)achieve.size(); i++ ){
+        int flag = Ranking::compareOverall(a, achieve[i]);
+        if(flag == 0){
+                flag = Ranking::compareDominateSolution(a, achieve[i]);
+        }
+        if(flag == -1){
+            dominate.push_back(i);
+        }else if(flag == 0){
+            if(a->equ(achieve[i]))          
+                return;            
+        }else{
+            return;
+        }
+    }
+    // discard Dominated solution
+    for(int i = 0; i < (int)dominate.size(); i++){
+        int j = dominate[i] - i;
+        delete achieve[j];
+        achieve.erase(achieve.begin() + j);
+    }
+    Solution* newMember = new Solution(pb, rnd);
+    newMember->copy(a);
+    achieve.push_back(newMember);
+    // adjust size
+    if((int)achieve.size() >= size){
+        Distance distance;
+        distance.crowdingDistanceAssignment(achieve);
+        sort(achieve.begin(), achieve.end(), compareCrowding);
+        while((int)achieve.size() >= size){
+            VectorSolution::reverse_iterator it = achieve.rbegin();
+            delete *it;
+            achieve.pop_back();
+        }
+    }
+}
 int main( int argc, char** argv) {
 
   Control control(argc, argv);
@@ -136,7 +174,7 @@ int main( int argc, char** argv) {
   Problem *problem = new Problem(control.getInputStream());
 
   rnd = new Random((unsigned) control.getSeed());
-  VectorSolution front0;
+  VectorSolution front0, achieveSet;
   while( control.triesLeft()){
     control.beginTry();
 
@@ -183,10 +221,12 @@ int main( int argc, char** argv) {
       generation++;
       //new_gen
       front0 = rankSolution(pop, problem, child);
+      pushToAchieve(child, achieveSet, 10, problem);
       control.setCurrentCost(pop[0]);
     }// while
     
     control.endTry(front0);
+    printPOP(achieveSet);
     // remember to delete the population
     for(int i=0; i < popSize; i++){
       delete pop[i];
