@@ -36,7 +36,7 @@ void Distance::crowdingDistanceAssignment(VectorSolution vSolution) {
     double min, max, dist;
     for(int i = 0; i < Solution::obj_N; i++) {
         ObjectiveCmp objCmp(i);
-        //sort(vSolution.begin(), vSolution.end(), objCmp);
+        sort(vSolution.begin(), vSolution.end(), objCmp);
         min = vSolution[0]->objective[i];
         max = vSolution[size - 1]->objective[i];
         
