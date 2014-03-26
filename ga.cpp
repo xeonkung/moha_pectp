@@ -170,7 +170,7 @@ int main( int argc, char** argv) {
 
   //int problemType = control.getProblemType(); 
   int popSize = 50;
-  
+  int achSize = 10;
   Problem *problem = new Problem(control.getInputStream());
 
   rnd = new Random((unsigned) control.getSeed());
@@ -188,7 +188,11 @@ int main( int argc, char** argv) {
       pop[i]->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
       pop[i]->computePenalty();
     }
-    rankSolution(pop, problem);
+    front0 = rankSolution(pop, problem);
+    for(int i = 0; i < (int)front0.size() && i < achSize; i++){
+        achieveSet.push_back(new Solution(problem, rnd));
+        achieveSet[i]->copy(front0[i]);
+    }
     control.setCurrentCost(pop[0]);
     while(control.timeLeft()){
 
@@ -221,7 +225,7 @@ int main( int argc, char** argv) {
       generation++;
       //new_gen
       front0 = rankSolution(pop, problem, child);
-      pushToAchieve(child, achieveSet, 10, problem);
+      pushToAchieve(child, achieveSet, achSize, problem);
       control.setCurrentCost(pop[0]);
     }// while
     
