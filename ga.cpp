@@ -144,18 +144,17 @@ VectorSolution rankSolution(VectorSolution &pop, Problem* problem, Solution* chi
     return front0;
 }
 
-void pushToAchieve(Solution* a, VectorSolution &achieve, int size, Problem* pb) {
+void pushToArchive(Solution* a, VectorSolution &archive, int size, Problem* pb) {
     vector<int> dominate;
-    for (int i = 0; i < (int) achieve.size(); i++) {
-        int flag = Ranking::compareOverall(a, achieve[i]);
+    for (int i = 0; i < (int) archive.size(); i++) {
+        int flag = Ranking::compareOverall(a, archive[i]);
         if (flag == 0) {
-            flag = Ranking::compareDominateSolution(a, achieve[i]);
+            flag = Ranking::compareDominateSolution(a, archive[i]);
         }
         if (flag == -1) {
             dominate.push_back(i);
         } else if (flag == 0) {
-            //return;
-            if (a->equ(achieve[i])) return;
+            if (a->equ(archive[i])) return;
         } else {
             return;
         }
@@ -163,23 +162,23 @@ void pushToAchieve(Solution* a, VectorSolution &achieve, int size, Problem* pb) 
     // discard Dominated solution
     for (int i = 0; i < (int) dominate.size(); i++) {
         int j = dominate[i] - i;
-        delete achieve[j];
-        achieve.erase(achieve.begin() + j);
+        delete archive[j];
+        archive.erase(archive.begin() + j);
     }
     Solution* temp = new Solution(pb, rnd);
     temp->copy(a);
     temp->rank = -1;
-    achieve.push_back(temp);
+    archive.push_back(temp);
 
     // adjust size
-    if ((int) achieve.size() > size) {
+    if ((int) archive.size() > size) {
         Distance distance;
-        distance.crowdingDistanceAssignment(achieve);
-        sort(achieve.begin(), achieve.end(), compareCrowding);
-        while ((int) achieve.size() > size) {
-            VectorSolution::reverse_iterator it = achieve.rbegin();
+        distance.crowdingDistanceAssignment(archive);
+        sort(archive.begin(), archive.end(), compareCrowding);
+        while ((int) archive.size() > size) {
+            VectorSolution::reverse_iterator it = archive.rbegin();
             delete *it;
-            achieve.pop_back();
+            archive.pop_back();
         }
     }
 }
@@ -190,14 +189,14 @@ int main(int argc, char** argv) {
 
     //int problemType = control.getProblemType(); 
     int popSize = 50;
-    int achSize = 10;
+    int archSize = 10;
     Problem *problem = new Problem(control.getInputStream());
 
     rnd = new Random((unsigned) control.getSeed());
     while (control.triesLeft()) {
         control.beginTry();
         int generation = 0;        
-        VectorSolution pop, front0, achieveSet;
+        VectorSolution pop, front0, archiveSet;
         // Random generate solution
         for (int i = 0; i < popSize; i++) {
             pop.push_back(new Solution(problem, rnd));
@@ -206,9 +205,9 @@ int main(int argc, char** argv) {
             pop[i]->computePenalty();
         }
         front0 = rankSolution(pop, problem);
-        for (int i = 0; i < (int) front0.size() && i < achSize; i++) {
-            achieveSet.push_back(new Solution(problem, rnd));
-            achieveSet[i]->copy(front0[i]);
+        for (int i = 0; i < (int) front0.size() && i < archSize; i++) {
+            archiveSet.push_back(new Solution(problem, rnd));
+            archiveSet[i]->copy(front0[i]);
         }
         control.setCurrentCost(pop[0]);
         while (control.timeLeft()) {
@@ -241,19 +240,19 @@ int main(int argc, char** argv) {
             child->computePenalty();
             generation++;
             //new_gen
-            pushToAchieve(child, achieveSet, achSize, problem);
+            pushToArchive(child, archiveSet, archSize, problem);
             front0 = rankSolution(pop, problem, child);
             control.setCurrentCost(pop[0]);
         }// while
 
         control.endTry(front0);
-        printSolutions(achieveSet, control.getOutputStream());
+        printSolutions(archiveSet, control.getOutputStream());
         // remember to delete the population
         for (int i = 0; i < popSize; i++) {
             delete pop[i];
         }
-        for (int i = 0; i < (int)achieveSet.size(); i++) {
-            delete achieveSet[i];
+        for (int i = 0; i < (int)archiveSet.size(); i++) {
+            delete archiveSet[i];
         }
     }
 
