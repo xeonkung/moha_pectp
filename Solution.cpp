@@ -1281,8 +1281,8 @@ vector<int> Solution::suffle(vector<int> source) {
 }
 
 bool Solution::equ(Solution* a){
-    for(int i = 0; i < data->n_of_events; i++){
-        if(sln[0] != a->sln[0] || sln[1] != a->sln[1])
+    for(int i = 0; i < (int)sln.size(); i++){
+        if(sln[i].first != a->sln[i].first || sln[i].second != a->sln[i].second)
             return false;
     }
     return true;
