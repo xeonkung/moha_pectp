@@ -252,7 +252,9 @@ int main(int argc, char** argv) {
         for (int i = 0; i < popSize; i++) {
             delete pop[i];
         }
-
+        for (int i = 0; i < (int)achieveSet.size(); i++) {
+            delete achieveSet[i];
+        }
     }
 
     delete problem;
