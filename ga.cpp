@@ -172,11 +172,11 @@ void pushToAchieve(Solution* a, VectorSolution &achieve, int size, Problem* pb) 
     achieve.push_back(temp);
 
     // adjust size
-    if ((int) achieve.size() >= size) {
+    if ((int) achieve.size() > size) {
         Distance distance;
         distance.crowdingDistanceAssignment(achieve);
         sort(achieve.begin(), achieve.end(), compareCrowding);
-        while ((int) achieve.size() >= size) {
+        while ((int) achieve.size() > size) {
             VectorSolution::reverse_iterator it = achieve.rbegin();
             delete *it;
             achieve.pop_back();
