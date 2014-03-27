@@ -168,6 +168,7 @@ void pushToAchieve(Solution* a, VectorSolution &achieve, int size, Problem* pb) 
     }
     Solution* temp = new Solution(pb, rnd);
     temp->copy(a);
+    temp->rank = -1;
     achieve.push_back(temp);
 
     // adjust size
