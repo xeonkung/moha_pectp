@@ -273,7 +273,7 @@ void Control::endTry(VectorSolution vs) {
             (*os) << vs[i]->sln[j].first << " ";
         (*os) << endl;
         for (int j = 0; j < vs[i]->data->n_of_events; j++)
-            (*os) << vs[i]->sln[j].first << " ";
+            (*os) << vs[i]->sln[j].second << " ";
         (*os) << endl;
     }   
     (*os) << "end solution " << nrTry << endl;

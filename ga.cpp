@@ -92,7 +92,7 @@ void printSolutions(VectorSolution &pop, ostream &os) {
             os<< pop[i]->sln[j].first << " ";
         os << endl;
         for (int j = 0; j < pop[i]->data->n_of_events; j++)
-            os << pop[i]->sln[j].first << " ";
+            os << pop[i]->sln[j].second << " ";
         os << endl;
     }
     os << "#end solution" << endl;
