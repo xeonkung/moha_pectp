@@ -194,13 +194,10 @@ int main(int argc, char** argv) {
     Problem *problem = new Problem(control.getInputStream());
 
     rnd = new Random((unsigned) control.getSeed());
-    VectorSolution front0, achieveSet;
     while (control.triesLeft()) {
         control.beginTry();
-
-        int generation = 0;
-
-        VectorSolution pop;
+        int generation = 0;        
+        VectorSolution pop, front0, achieveSet;
         // Random generate solution
         for (int i = 0; i < popSize; i++) {
             pop.push_back(new Solution(problem, rnd));
@@ -215,7 +212,7 @@ int main(int argc, char** argv) {
         }
         control.setCurrentCost(pop[0]);
         while (control.timeLeft()) {
-
+            
             // start reproduction (steady-state GA)
             Solution* child = new Solution(problem, rnd);
 
