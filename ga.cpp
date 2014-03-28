@@ -67,7 +67,7 @@ bool compareCrowding(Solution * a, Solution * b) {
 void printPOP(VectorSolution &pop, ostream &os) {
     os << "#print pop" << endl;
     for (int i = 0; i < (int) pop.size(); i++) {
-        os << "pop[" << i << "](" << pop[i] << ")";
+        os << "pop[" << (i+1) << "](" << pop[i] << ")";
         os << "<";
         os << pop[i]->hcv << " //";
         for (int j = 0; j < Solution::obj_N; j++) {
@@ -81,7 +81,7 @@ void printPOP(VectorSolution &pop, ostream &os) {
 void printSolutions(VectorSolution &pop, ostream &os) {
     os << "#print solutions" << endl;
     for (int i = 0; i < (int) pop.size(); i++) {
-        os << "pop[" << i << "](" << pop[i] << ")";
+        os << "pop[" << (i+1) << "](" << pop[i] << ")";
         os << "<";
         os << pop[i]->hcv << " //";
         for (int j = 0; j < Solution::obj_N; j++) {
