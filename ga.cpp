@@ -186,7 +186,6 @@ void pushToArchive(Solution* a, VectorSolution &archive, int size, Problem* pb) 
 int main(int argc, char** argv) {
 
     Control control(argc, argv);
-    
     //int problemType = control.getProblemType(); 
     int popSize = 50;
     int archSize = 10;
@@ -201,7 +200,10 @@ int main(int argc, char** argv) {
         for (int i = 0; i < popSize; i++) {
             pop.push_back(new Solution(problem, rnd));
             pop[i]->RandomInitialSolution();
-            pop[i]->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
+            if(control.flag["LS1"])
+                pop[i]->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
+            if(control.flag["LS2"])
+                pop[i]->LS2(control.getMaxSteps(), control.getTimeLimit());
             pop[i]->computePenalty();
         }
         front0 = rankSolution(pop, problem);
@@ -232,9 +234,10 @@ int main(int argc, char** argv) {
             }
 
             //apply local search to offspring
-
-            child->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
-            //child->LS2(maxSteps, control.getTimeLimit());
+            if(control.flag["LS1"])
+                child->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
+            if(control.flag["LS2"])
+                child->LS2(control.getMaxSteps(), control.getTimeLimit());
             //child->tabuSearch(10, control.alfa);
             //evaluate the offspring
             child->computePenalty();

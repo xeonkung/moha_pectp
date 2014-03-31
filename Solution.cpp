@@ -1228,39 +1228,42 @@ void Solution::LS2(int maxSteps, double LS_limit, double prob1){
         }
     }
     // now we have wt
-    //vector<int> eventList = suffle(timeslot_events[wt]);    
+    //vector<int> eventList = suffle(timeslot_events[wt]);  
     
     map<int, int> ev_timeslot;
     Solution * neiborSolution = new Solution( data, rg );    
     while(step < maxSteps) {
         int currHcv = 0, currScv = 0;
-        int neiborHcv = 0, neiborScv = 0;        
+        int neiborHcv = 0, neiborScv = 0;
+        bool foundBetter = false;
+        
         if(timer.elapsedTime(Timer::VIRTUAL) > LS_limit) break;
-        neiborSolution->copy(this);        
+        neiborSolution->copy(this);
         for(vector<int>::iterator i = timeslot_events[wt].begin(); i != timeslot_events[wt].end(); i++) {
             step++;
             ev_timeslot[*i] = occupiedNew[(int)(rg->next() * occupiedNew.size())];
             neiborSolution->Move1(*i, ev_timeslot[*i]);
-        }
-        for(vector<int>::iterator i = timeslot_events[wt].begin(); i != timeslot_events[wt].end(); i++) {
-            neiborHcv += neiborSolution->eventAffectedHcv(*i) + neiborSolution->affectedRoomInTimeslotHcv(ev_timeslot[*i]);
-            currHcv += eventHcv(*i) + affectedRoomInTimeslotHcv(wt);
-        }
-        if(neiborHcv == 0) {
-            for(vector<int>::iterator i = timeslot_events[wt].begin(); i != timeslot_events[wt].end(); i++) {
-                neiborScv += neiborSolution->eventScv(*i) + singleClassesScv(*i);
-                currScv += eventScv(*i) + neiborSolution->singleClassesScv(*i);
-            }
-            if (neiborScv < currScv) {
-                copy(neiborSolution);
-                break;
-            }
-        } else {
-            if (neiborHcv < currHcv) {
-                copy(neiborSolution);
+            neiborHcv = neiborSolution->eventAffectedHcv(*i) + neiborSolution->affectedRoomInTimeslotHcv(ev_timeslot[*i]);
+            currHcv = eventHcv(*i) + affectedRoomInTimeslotHcv(wt);
+            foundBetter = true;
+            if(neiborHcv == 0) {
+                neiborScv = neiborSolution->eventScv(*i) + singleClassesScv(*i);
+                currScv = eventScv(*i) + neiborSolution->singleClassesScv(*i);
+                if (neiborScv > currScv) {
+                    foundBetter = false;
+                    break;
+                }
+            }else if(neiborHcv > currHcv) {
+                foundBetter = false;
                 break;
             }
         }
+        if(foundBetter){
+            copy(neiborSolution);
+        }else{
+            // nothing
+            break;
+        }    
     }
     delete neiborSolution;
 }

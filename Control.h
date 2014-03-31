@@ -70,6 +70,7 @@ public:
 	double getProb3() { return prob3;} // get the probability for each move of type 3 in the local search  
         
         int getTS_maxSteps() {return tsMaxSteps;}
+        map<string, bool> flag;
 };
 
 #endif

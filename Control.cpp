@@ -13,7 +13,9 @@ Control::Control( int argc, char** argv ) {
             {"output", required_argument, 0, 'o'},
             {"gen", required_argument, 0, 'g'},
             {"seed", required_argument, 0, 's'},
-            {"time", required_argument, 0, 't'}
+            {"time", required_argument, 0, 't'},
+            {"LS1", no_argument, 0, 301},
+            {"LS2", no_argument, 0, 302}
         };
         c = getopt_long(argc, argv, "hi:o:m:n:g:s:t:", long_option, &opt_index);
         if (c == -1) break;
@@ -27,7 +29,8 @@ Control::Control( int argc, char** argv ) {
                 cout << " -o, --output \t Output path. Default is screen." << endl;
                 cout << " -s, --seed \t Set random seed" << endl;
                 cout << " -t, --time \t Set limit time" << endl;
-                
+                cout << " --LS1 \t\t Enable LS1" << endl;
+                cout << " --LS2 \t\t Enable LS2" << endl;
                 exit(1);
                 break;
             case 'g':
@@ -50,6 +53,14 @@ Control::Control( int argc, char** argv ) {
                 break;
             case 't':
                 parameters["-t"] = optarg;
+                break;
+            case 301:
+                cout << "Enable: LS1" << endl;
+                flag["LS1"] = true;
+                break;
+            case 302:
+                cout << "Enable: LS2" << endl;
+                flag["LS2"] = true;
                 break;
         }
     }
@@ -126,9 +137,9 @@ Control::Control( int argc, char** argv ) {
 	if( parameterExists( "-m" ) ) {
 		maxSteps = getIntParameter( "-m" );
 		cout <<"Max number of steps in the local search " << maxSteps << endl;
-	} else {
-	  //cerr << "Warning: The maximum number of steps for the local search is set by default to 100" << endl;
+	} else {                
 		maxSteps = 100; // default max steps
+                cerr << "Warning: The maximum number of steps for the local search is set by default to 100" << endl;
 	}
 
         // check for time limit parameter for the local search
