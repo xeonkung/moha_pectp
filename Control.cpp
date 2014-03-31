@@ -1,20 +1,59 @@
 #include "Control.h"
 #include <limits.h>
+#include <getopt.h>
 Control::Control( int argc, char** argv ) {
-
-	// parse the command line options to set all vars
-
-	if( ( argc % 2 == 0 ) || ( argc == 1 ) ) {
-		cerr << "Parse error: Number of command line parameters incorrect\n";
-		cerr << "Usage:" << endl;
-		cerr << argv[ 0 ] << " -i InputFile [-o OutputFile] [-n NumberOfTries] [-s RandomSeed] [-t TimeLimit] [-p ProblemType]" << endl;
-		exit(1);
-	}
-	
-	for( int i = 1; i < argc / 2 + 1; i++ ) {
-		parameters[ argv[ i * 2 - 1 ] ] = argv[ i * 2 ];
-	}
-	
+    
+    //edit use getopt by xeonkung
+    int c;
+    while(1){
+        int opt_index = 0;
+        static struct option long_option[] = {
+            {"help", no_argument, 0, 'h'},
+            {"input", required_argument, 0, 'i'},
+            {"output", required_argument, 0, 'o'},
+            {"gen", required_argument, 0, 'g'},
+            {"seed", required_argument, 0, 's'},
+            {"time", required_argument, 0, 't'}
+        };
+        c = getopt_long(argc, argv, "hi:o:m:n:g:s:t:", long_option, &opt_index);
+        if (c == -1) break;
+        switch(c){
+            case 'h':
+                cout << "This is MOHA help." << endl;
+                cout << " -g, --gen \t Generation number" << endl;
+                cout << " -i, --input \t Input path." << endl;
+                cout << " -m \t\t Max step number in local search." << endl;
+                cout << " -n \t\t Try number" << endl;
+                cout << " -o, --output \t Output path. Default is screen." << endl;
+                cout << " -s, --seed \t Set random seed" << endl;
+                cout << " -t, --time \t Set limit time" << endl;
+                
+                exit(1);
+                break;
+            case 'g':
+                parameters["-g"] = optarg;
+                break;
+            case 'i':
+                parameters["-i"] = optarg;
+                break;
+            case 'o':
+                parameters["-o"] = optarg;
+                break;
+            case 'm':
+                parameters["-m"] = optarg;
+                break;
+            case 'n':
+                parameters["-n"] = optarg;
+                break;
+            case 's':
+                parameters["-s"] = optarg;
+                break;
+            case 't':
+                parameters["-t"] = optarg;
+                break;
+        }
+    }
+			
 	nrTry = 0;
 	
 	// check for input parameter
@@ -70,7 +109,7 @@ Control::Control( int argc, char** argv ) {
 		problemType = getIntParameter( "-p" );
 		cout <<"Problem instance type " << problemType << endl;
 	} else {
-	  //cerr << "Warning: The problem instance type is set by default to 1 (easy)" << endl;
+//                cerr << "Warning: The problem instance type is set by default to 1 (easy)" << endl;
 		problemType = 1; // default problem type
 	}
 
@@ -78,7 +117,7 @@ Control::Control( int argc, char** argv ) {
 		alfa = getDoubleParameter( "-alfa" );
 		cout << "Tabu list length factor " << alfa <<endl;
 	} else {
-		cerr << "Warning: The tabu list length factor is set to default 0.01" << endl;
+//		cerr << "Warning: The tabu list length factor is set to default 0.01" << endl;
 		alfa = 0.01; // default local search probability for each move of type 1 to be performed
 	}
         
@@ -98,7 +137,7 @@ Control::Control( int argc, char** argv ) {
 		LS_limit = getDoubleParameter( "-l" );
 		cout <<"Local search time limit " << LS_limit << endl;
 	} else {
-		cerr << "Warning: The local search time limit is set to default (99999 sec)" << endl;
+//		cerr << "Warning: The local search time limit is set to default (99999 sec)" << endl;
 		LS_limit = 99999; // default local search time limit
 	}
 
@@ -108,7 +147,7 @@ Control::Control( int argc, char** argv ) {
 		prob1 = getDoubleParameter( "-p1" );
 		cout << "LS move 1 probability " << prob1 <<endl;
 	} else {
-		cerr << "Warning: The local search move 1 probability is set to default 1.0" << endl;
+//		cerr << "Warning: The local search move 1 probability is set to default 1.0" << endl;
 		prob1 = 1.0; // default local search probability for each move of type 1 to be performed
 	}
 
@@ -116,7 +155,7 @@ Control::Control( int argc, char** argv ) {
 		prob2 = getDoubleParameter( "-p2" );
 		cout <<"LS move 2 probability " << prob2 << endl;
 	} else {
-		cerr << "Warning: The local search move 2 probability is set to default 1.0" << endl;
+//		cerr << "Warning: The local search move 2 probability is set to default 1.0" << endl;
 		prob2 = 1.0; // default local search probability for each move to be performed
 	}
 
@@ -124,7 +163,7 @@ Control::Control( int argc, char** argv ) {
 		prob3 = getDoubleParameter( "-p3" );
 		cout <<"LS move 3 probability " << prob3 <<  endl;
 	} else {
-		cerr << "Warning: The local search move 3 probability is set to default 1.0" << endl;
+//		cerr << "Warning: The local search move 3 probability is set to default 1.0" << endl;
 		prob3 = 1.0; // default local search probability for each move to be performed
 	}
 

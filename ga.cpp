@@ -186,7 +186,7 @@ void pushToArchive(Solution* a, VectorSolution &archive, int size, Problem* pb) 
 int main(int argc, char** argv) {
 
     Control control(argc, argv);
-
+    
     //int problemType = control.getProblemType(); 
     int popSize = 50;
     int archSize = 10;
