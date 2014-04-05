@@ -188,7 +188,7 @@ int main(int argc, char** argv) {
     Control control(argc, argv);
     //int problemType = control.getProblemType(); 
     int popSize = 50;
-    int archSize = 10;
+    int archSize = 20;
     Problem *problem = new Problem(control.getInputStream());
 
     rnd = new Random((unsigned) control.getSeed());

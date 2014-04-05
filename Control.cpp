@@ -314,7 +314,8 @@ void Control::endTry(VectorSolution vs) {
     int size = (int) vs.size();
     (*os) << "Front 0" << endl;
     for(int i = 0; i < size; i++){
-        (*os) << "soluation " << (i+1) << " = <";
+        (*os) << "solution " << (i+1) << " = <";
+        (*os) << vs[i]->hcv << " // ";
         for (int j = 0; j < Solution::obj_N; j++){
             (*os) << vs[i]->objective[j] << ", ";
         }
