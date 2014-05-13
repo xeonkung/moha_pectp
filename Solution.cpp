@@ -1199,7 +1199,8 @@ void Solution::setCurrentCost()
 	    double time = timer.elapsedTime( Timer::VIRTUAL );
 	    (*outs) << "best " << bestScv << " time ";
 			outs->flags( ios::fixed );
-			(*outs) << ( time < 0 ? 0.0 : time ) << endl;
+			(*outs) << ( time < 0 ? 0.0 : time );
+            (*outs) << " iter " << iterCount << endl;
 	   }else if(hcv!=0)
 	   {
 	    	int currentEvaluation = (hcv * 1000000) + computeScv();
@@ -1208,7 +1209,8 @@ void Solution::setCurrentCost()
 	      double time = timer.elapsedTime( Timer::VIRTUAL );
 	    (*outs) << "best " << bestEvaluation << " time ";
 			outs->flags( ios::fixed );
-			(*outs) << ( time < 0 ? 0.0 : time ) << endl;
+			(*outs) << ( time < 0 ? 0.0 : time );
+            (*outs) << " iter " << iterCount << endl;
 	    }
 	  }
 	  //}
