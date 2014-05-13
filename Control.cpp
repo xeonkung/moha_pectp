@@ -69,7 +69,7 @@ Control::Control( int argc, char** argv ) {
 		cout << "Time limit of tabu " << timeLimit2 << endl;
 	} else {
 		cerr << "Warning: Time limit of tabu is set to default (90 sec)" << endl;
-		timeLimit2 = 90; // default time limit
+		timeLimit2 = 0; // default time limit
 	}
         // check for problem instance type parameter for the local search
 
