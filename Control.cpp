@@ -81,12 +81,12 @@ Control::Control( int argc, char** argv ) {
 		problemType = 1; // default problem type
 	}
 
-        if( parameterExists( "-alfa" ) ) {
-		alfa = getDoubleParameter( "-alfa" );
+        if( parameterExists( "-a" ) ) {
+		alfa = getDoubleParameter( "-a" );
 		cout << "Tabu list length factor " << alfa <<endl;
 	} else {
 		cerr << "Warning: The tabu list length factor is set to default 0.01" << endl;
-		alfa = 0.01; // default local search probability for each move of type 1 to be performed
+		alfa = 0.01;
 	}
         
         // check for maximum steps parameter for the local search

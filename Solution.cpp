@@ -991,7 +991,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 						bestHcv = hcv;
 						if(hcv == 0)
 						{
-								computeScv();
+                                                    computeScv();
 						}
 						evCount = 0;
 						iterCount++;
@@ -1180,9 +1180,11 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 	
 }//end tabu search
 bool Solution::tabu(move m){
-	if( tabuList[m.x] + (int)(alfa * (double)(data->n_of_events) ) - rg->next() * 0 > iterCount )
-		return true;
-	return false;
+    //if( tabuList[m.x] + (int)(alfa * (double)(data->n_of_events) ) - rg->next() * 0 > iterCount )
+    rg->next();
+    if( tabuList[m.x] + (int)(alfa * (double)(data->n_of_events) ) > iterCount )
+        return true;
+    return false;
 }
 
 void Solution::setTabu(move m){
