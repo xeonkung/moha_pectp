@@ -210,7 +210,7 @@ Control::beginTry() {
 void
 Control::endTry( Solution *bestSolution) {
   (*os) << "begin solution " << nrTry << endl;
-  (*os) << "total time: " << getTime() << " gen: " << gen << endl;
+  (*os) << "ga time: " << getTime() << " gen: " << gen << endl;
   if(bestSolution->feasible){
     (*os) << "feasible: evaluation function = " << bestSolution->scv <<endl;
     for(int i = 0; i < (*bestSolution).data->n_of_events; i++)
@@ -236,7 +236,7 @@ Control::endTry( Solution *bestSolution) {
 void Control::endTry2(Solution *bestSolution) {
   (*os) << "Enhanced with Tabu Search" << endl;
   (*os) << "begin solution " << nrTry << endl;
-  (*os) << "total time (tabu): " << getTime() - getTimeLimit() << " iter: " << bestSolution->iterCount << endl;
+  (*os) << "tabu time: " << getTime() - getTimeLimit() << " iter: " << bestSolution->iterCount << endl;
   if(bestSolution->feasible){
     (*os) << "feasible: evaluation function = " << bestSolution->scv <<endl;
     for(int i = 0; i < (*bestSolution).data->n_of_events; i++)

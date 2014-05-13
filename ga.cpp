@@ -154,6 +154,7 @@ int main( int argc, char** argv) {
     pop[0]->computePenalty();
     control.endTry2(pop[0]);
     // remember to delete the population
+    (*outs) << "[--[ End ]--] Total Time:" << control.getTime() << endl;
     for(int i=0; i < popSize; i++){
       delete pop[i];
     }
