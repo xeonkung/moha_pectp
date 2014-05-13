@@ -28,16 +28,17 @@ private:
 	int bestEvaluation;
 	int seed;
 	double timeLimit;
+        double timeLimit2;
 	int problemType; 
 	int maxSteps;
 	double LS_limit;
 	double prob1, prob2, prob3;
-        int tsMaxSteps;
-	ostream *os;
-	istream *is;
+        int tsMaxSteps;	
         int gen, limitGen;
 	
 public:
+        ostream *os;
+	istream *is;
 	Control( int, char** ); // construct a control object, given a set of command line options
 	~Control();
 	double alfa;
@@ -52,7 +53,7 @@ public:
 	
 	void beginTry(); // begin a run
 	void endTry(Solution*); // end a run
-	
+	void endTry2(Solution*);        
 	void setCurrentCost(Solution* ); // tell control the quality of your solution
 	
 	istream& getInputStream() { return *is; } // get the input stream for constructing problems
@@ -61,6 +62,7 @@ public:
 	int getNumberOfTries() { return maxTry; } // get the max number of tries
 	bool triesLeft() { return ( nrTry < maxTry ); } // check whether more tries need to be run
 	double getTimeLimit() { return timeLimit; } // get the time limit of one run
+        double getTimeLimit2() { return timeLimit2; }
 	int getProblemType() {return problemType;} //get the problem type
 	int getMaxSteps(){ return maxSteps; } // get the type of problem instance
 	double getLS_limit() { return LS_limit;} // get the time limit for a single local search run

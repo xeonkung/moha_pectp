@@ -10,6 +10,7 @@
 #include <vector>
 using namespace std;
 Random* rnd;
+extern ostream *outs;
 
 /*class compareSolution{
 public:
@@ -58,6 +59,7 @@ bool compareSolution(Solution * sol1, Solution * sol2)
 int main( int argc, char** argv) {
 
   Control control(argc, argv);
+  outs = control.os;
   int popSize = 50;
 //  int maxSteps = control.getMaxSteps();
   
@@ -147,7 +149,10 @@ int main( int argc, char** argv) {
       delete child; 
     }    
     control.endTry(pop[0]);
-
+    (*outs) << "[--[ Start Tabu Search ]--]" << endl;
+    pop[0]->tabuSearch(control.getTimeLimit2(), control.alfa, control.getProb1(), control.getProb2());
+    pop[0]->computePenalty();
+    control.endTry2(pop[0]);
     // remember to delete the population
     for(int i=0; i < popSize; i++){
       delete pop[i];

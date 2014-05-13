@@ -63,7 +63,14 @@ Control::Control( int argc, char** argv ) {
 		cerr << "Warning: Time limit is set to default (90 sec)" << endl;
 		timeLimit = 90; // default time limit
 	}
-
+        
+        if( parameterExists( "-t2" ) ) {
+		timeLimit2 = getDoubleParameter( "-t2" );
+		cout << "Time limit of tabu " << timeLimit2 << endl;
+	} else {
+		cerr << "Warning: Time limit of tabu is set to default (90 sec)" << endl;
+		timeLimit2 = 90; // default time limit
+	}
         // check for problem instance type parameter for the local search
 
 	if( parameterExists( "-p" ) ) {
@@ -226,7 +233,25 @@ Control::endTry( Solution *bestSolution) {
     (*os) << endl;
     }*/
 }
-
+void Control::endTry2(Solution *bestSolution) {
+  (*os) << "Enhanced with Tabu Search" << endl;
+  (*os) << "begin solution " << nrTry << endl;
+  (*os) << "total time (tabu): " << getTime() - getTimeLimit() << " iter: " << bestSolution->iterCount << endl;
+  if(bestSolution->feasible){
+    (*os) << "feasible: evaluation function = " << bestSolution->scv <<endl;
+    for(int i = 0; i < (*bestSolution).data->n_of_events; i++)
+      (*os) << bestSolution->sln[i].first << " " ;
+    (*os) << endl;
+    for(int i = 0; i < (*bestSolution).data->n_of_events; i++)
+      (*os) << bestSolution->sln[i].second << " " ;
+    (*os) << endl;
+  }
+  else{
+    (*os) << "unfeasible: evaluation function = " << (bestSolution->computeHcv() * 1000000) + bestSolution->computeScv() <<endl;
+  }
+  (*os) << "end solution " << nrTry << endl;
+  (*os) << "end try " << nrTry << endl;
+}
 void
 Control::setCurrentCost(Solution *currentSolution ) {
   //if( timeLeft() ) {
