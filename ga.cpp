@@ -147,14 +147,16 @@ int main( int argc, char** argv) {
       // sort the new pop
 	
       delete child; 
-    }    
+    }
     control.endTry(pop[0]);
-    (*outs) << "[--[ Start Tabu Search ]--]" << endl;
-    pop[0]->tabuSearch(control.getTimeLimit2(), control.alfa, control.getProb1(), control.getProb2());
-    pop[0]->computePenalty();
-    control.endTry2(pop[0]);
-    // remember to delete the population
-    (*outs) << "[--[ End ]--] Total Time:" << control.getTime() << endl;
+        if (control.getTimeLimit2() > 0) {
+            (*outs) << "[--[ Start Tabu Search ]--]" << endl;
+            pop[0]->tabuSearch(control.getTimeLimit2(), control.alfa, control.getProb1(), control.getProb2());
+            pop[0]->computePenalty();
+            control.endTry2(pop[0]);
+            // remember to delete the population
+            (*outs) << "[--[ End ]--] Total Time:" << control.getTime() << endl;
+        }
     for(int i=0; i < popSize; i++){
       delete pop[i];
     }
