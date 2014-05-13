@@ -42,6 +42,7 @@ public:
 	Control( int, char** ); // construct a control object, given a set of command line options
 	~Control();
 	double alfa;
+        int maxSteps2;
 	bool parameterExists( string ); // check whether a certain parameter is given at the command line
 	int getIntParameter( string ); // get the integer contents of a parameter
 	double getDoubleParameter( string ); // get the double contents of a parameter

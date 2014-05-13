@@ -896,7 +896,7 @@ void Solution::mutation(){
 	randomMove();
 }
 
-void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2)
+void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2, int maxSteps)
 {// perform tabu search with given time limit and probabilities for each type of move
 
 	alfa = a;
@@ -945,7 +945,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 	int i = -1; // current event pointer
 	
 	//repeat untill the time limit is reached
-	while(timer.elapsedTime(Timer::VIRTUAL) < timeLimit)
+	while(timer.elapsedTime(Timer::VIRTUAL) < timeLimit && iterCount < maxSteps)
 	{
 		int evCount = 0;     // counter of events considered
 		bestMove.reset();	// best non improving move is initually set to be empty
@@ -954,7 +954,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 		//evCount is increased untill or a better solution is found or
 		//we have already visited the whole neighborhood (evCount == n_of_events)
 		//In both case a move is made and evCount is reset to zero
-		while(evCount < data->n_of_events && timer.elapsedTime(Timer::VIRTUAL) < timeLimit)
+		while(evCount < data->n_of_events && timer.elapsedTime(Timer::VIRTUAL) < timeLimit && iterCount < maxSteps)
 		{
 			i = (i+1)% data->n_of_events; //next event
 
@@ -971,7 +971,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 			int t_orig = sln[eventList[i]].first;
 			for(int h = 0, t = t_start; h < 45; t= (t+1)%45, h++)
 			{
-				if(timer.elapsedTime(Timer::VIRTUAL) > timeLimit)
+				if(timer.elapsedTime(Timer::VIRTUAL) > timeLimit || iterCount > maxSteps)
 					break;
 				if(rg->next() < prob1)
 				{ // with given probability			
@@ -1051,7 +1051,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 			{
 				for(int j= (i+1)%data->n_of_events; j != i ;j = (j+1)%data->n_of_events)
 				{ // try moves of type 2
-					if(timer.elapsedTime(Timer::VIRTUAL) > timeLimit)
+					if(timer.elapsedTime(Timer::VIRTUAL) > timeLimit || iterCount > maxSteps)
 						break;
 					if(rg->next() < prob2)
 					{ // with given probability
@@ -1157,7 +1157,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 			hcv = bestMove.Hcv;
 			scv = bestMove.Scv;
 			setTabu(bestMove);
-		}else if(timer.elapsedTime(Timer::VIRTUAL) < timeLimit)
+		}else if(timer.elapsedTime(Timer::VIRTUAL) < timeLimit && iterCount < maxSteps)
 		{
 			randomMove();
 			computeHcv();

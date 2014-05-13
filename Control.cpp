@@ -98,6 +98,14 @@ Control::Control( int argc, char** argv ) {
 	  //cerr << "Warning: The maximum number of steps for the local search is set by default to 100" << endl;
 		maxSteps = 100; // default max steps
 	}
+        
+        if( parameterExists( "-m2" ) ) {
+		maxSteps2 = getIntParameter( "-m2" );
+		cout <<"Max number of steps in the tabu search " << maxSteps2 << endl;
+	} else {
+	  //cerr << "Warning: The maximum number of steps for the local search is set by default to 100" << endl;
+		maxSteps2 = 30000; // default max steps
+	}
 
         // check for time limit parameter for the local search
 	
