@@ -59,7 +59,7 @@ int main( int argc, char** argv) {
 
   Control control(argc, argv);
   int popSize = 50;
-  int maxSteps = control.getMaxSteps();
+//  int maxSteps = control.getMaxSteps();
   
   Problem *problem = new Problem(control.getInputStream());
 

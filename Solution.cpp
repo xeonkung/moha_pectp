@@ -1,9 +1,11 @@
 #include "Solution.h"
+ostream *outs;
 
 Solution::Solution(Problem* pd, Random* rnd) {
 
 	data = pd;
 	rg = rnd;
+        eventList = new int [data->n_of_events];
 	slnInit();
 }
 
@@ -897,12 +899,13 @@ void Solution::mutation(){
 void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2)
 {// perform tabu search with given time limit and probabilities for each type of move
 
-	double alfa = a;
+	alfa = a;
   	timer.resetTime(); // reset time counter for the local search
  // 	computeHcv();
  // 	computeScv();
-	int bestHcv = hcv; //set equal to the hcv of the first found solution
-	int bestScv = scv; // if the first found solution is not feasible scv == 99999
+	bestHcv = hcv; //set equal to the hcv of the first found solution
+	bestScv = scv; // if the first found solution is not feasible scv == 99999
+        bestEvaluation = INT_MAX;
 	
 
 	
@@ -916,7 +919,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 	Solution *neighbourSolution = new Solution( data, rg );
 			
 	int eventList[data->n_of_events]; // keep a list of events to go through
-	int * tabuList = new int [data->n_of_events]; // tabu list of events
+	tabuList = new int [data->n_of_events]; // tabu list of events
 
 	for(int i = 0; i < data->n_of_events; i++)
 
@@ -933,7 +936,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 		eventList[j] = h;
 	}
  
-	int iterCount = 0; // set iteration counter to zero
+	iterCount = 0; // set iteration counter to zero
 		
 	move bestMove; //in bestMove are stored the events that are moved according to 
 				   //the best not improving neighbour solution
@@ -984,7 +987,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 //					    cout<< "Hcv" << newHcv << endl;
 						copy( neighbourSolution );
 						hcv = newHcv;
-						setTabu(move(i), tabuList, iterCount);
+						setTabu(move(i));
 						bestHcv = hcv;
 						if(hcv == 0)
 						{
@@ -1016,18 +1019,19 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 								copy( neighbourSolution );		
 								hcv = newHcv;					
 								scv = newScv;
-								setTabu(move(i), tabuList, iterCount);
+								setTabu(move(i));
+                                                                setCurrentCost();
 								evCount = 0;
 								iterCount++;
 								foundbetter = true;
 								bestMove.reset();
 								break;
-							}else if(!tabu(i, tabuList, alfa, iterCount) && bestMove.Scv > newScv)
+							}else if(!tabu(i) && bestMove.Scv > newScv)
 							{//memorize the best found non improving neighbouring solution
 								bestNeighbourSolution->copy(neighbourSolution);
 								bestMove.reset(i,-1,0,newScv);
 							}						
-					}else if( !tabu(i, tabuList, alfa, iterCount) && bestMove.Hcv > newHcv)
+					}else if( !tabu(i) && bestMove.Hcv > newHcv)
 					{
 						bestNeighbourSolution->copy(neighbourSolution);
 						bestMove.reset(i,-1,newHcv);
@@ -1076,11 +1080,12 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 						   // cout<< "Hcv" << newHcv << endl;
 							hcv = newHcv;
 							bestHcv = hcv;
-							setTabu(move(i,j), tabuList, iterCount);
+							setTabu(move(i,j));
 							if(hcv == 0)
 							{
 								computeScv();
 							}
+                                                        setCurrentCost();
 							evCount = 0;
 							iterCount++;
 							foundbetter = true;
@@ -1114,18 +1119,19 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 									copy( neighbourSolution );		
 									hcv = newHcv;					
 									scv = newScv;
-									setTabu(move(i,j), tabuList, iterCount);
+									setTabu(move(i,j));
+                                                                        setCurrentCost();
 									evCount = 0;
 									iterCount++;
 									foundbetter = true;
 									bestMove.reset();
 									break;
-								}else if(!tabu(move(i,j), tabuList, alfa, iterCount) && bestMove.Scv > newScv)
+								}else if(!tabu(move(i,j)) && bestMove.Scv > newScv)
 								{//memorize the best found non improving neighbouring solution
 									bestNeighbourSolution->copy(neighbourSolution);
 									bestMove.reset(i,j,0,newScv);
 								}
-							}else if( bestMove.Hcv > newHcv && !tabu(move(i,j), tabuList, alfa, iterCount))
+							}else if( bestMove.Hcv > newHcv && !tabu(move(i,j)))
 							{
 								bestNeighbourSolution->copy(neighbourSolution);
 								bestMove.reset(i,j,newHcv);
@@ -1150,7 +1156,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 			copy( bestNeighbourSolution );
 			hcv = bestMove.Hcv;
 			scv = bestMove.Scv;
-			setTabu(bestMove, tabuList, iterCount);
+			setTabu(bestMove);
 		}else if(timer.elapsedTime(Timer::VIRTUAL) < timeLimit)
 		{
 			randomMove();
@@ -1158,6 +1164,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 			if(hcv == 0)
 			{
 				computeScv();
+                                setCurrentCost();
 			}
 		}
 		//cout<< "Hcv" << hcv << " Scv" << scv << endl;
@@ -1172,16 +1179,39 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
     delete []tabuList;
 	
 }//end tabu search
-bool Solution::tabu(move m, int *tabuList,double alfa, int iterCount){
+bool Solution::tabu(move m){
 	if( tabuList[m.x] + (int)(alfa * (double)(data->n_of_events) ) - rg->next() * 0 > iterCount )
 		return true;
 	return false;
 }
 
-void Solution::setTabu(move m, int *tabuList, int iterCount){
+void Solution::setTabu(move m){
 	tabuList[m.x] = iterCount;
 	if(m.y >= 0)
 		tabuList[m.x] = iterCount;
+}
+
+void Solution::setCurrentCost()
+{
+	  if( hcv ==0 && scv < bestScv ) {
+	    bestScv = scv;
+   	    bestEvaluation = scv;
+	    double time = timer.elapsedTime( Timer::VIRTUAL );
+	    (*outs) << "best " << bestScv << " time ";
+			outs->flags( ios::fixed );
+			(*outs) << ( time < 0 ? 0.0 : time ) << endl;
+	   }else if(hcv!=0)
+	   {
+	    	int currentEvaluation = (hcv * 1000000) + computeScv();
+	    if(currentEvaluation < bestEvaluation){
+	      bestEvaluation = currentEvaluation;
+	      double time = timer.elapsedTime( Timer::VIRTUAL );
+	    (*outs) << "best " << bestEvaluation << " time ";
+			outs->flags( ios::fixed );
+			(*outs) << ( time < 0 ? 0.0 : time ) << endl;
+	    }
+	  }
+	  //}
 }
 
 void Solution::LS2(int maxSteps, double LS_limit, double prob1){    

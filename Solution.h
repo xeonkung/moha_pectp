@@ -64,9 +64,20 @@ class Solution{
   void crossover(Solution* parent1, Solution* parent2); 
   void mutation();
   
-  void tabuSearch(double timeLimit, double a, double prob1 = 1.0, double prob2 = 1.0);
-  bool tabu(move m, int *tabuList,double alfa, int iterCount);
-  void setTabu(move m, int *tabuList, int iterCount);
+  void tabuSearch(double timeLimit, double alfa, double prob1 = 0.1, double prob2 = 0.1);//apply tabu search with the given parameters
+  //void delta1Compute(Solution * neighbourSolution, int i, int t, int t_orig);
+  //void delta2Compute(Solution * neighbourSolution, int i, int j);
+  int iterCount; //step counter
+  int * eventList;
+  int * tabuList; // tabu list of events
+  bool tabu(move);
+  void setTabu(move);
+  void setCurrentCost();
+  int bestHcv;
+  int bestScv;
+  int bestEvaluation;
+  double alfa;
+  
   void LS2(int maxSteps, double LS_limit = 999999, double prob1 = 1.0);
   
  private:
