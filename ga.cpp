@@ -151,7 +151,7 @@ int main( int argc, char** argv) {
     control.endTry(pop[0]);
         if (control.getTimeLimit2() > 0) {
             (*outs) << "[--[ Start Tabu Search ]--]" << endl;
-            pop[0]->tabuSearch(control.getTimeLimit2(), control.alfa, control.getProb1(), control.getProb2());
+            pop[0]->tabuSearch(control.getTimeLimit2(), control.alfa, 0.1, 0.1);
             pop[0]->computePenalty();
             control.endTry2(pop[0]);
             // remember to delete the population
