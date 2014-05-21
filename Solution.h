@@ -68,7 +68,7 @@ class Solution{
   //void delta1Compute(Solution * neighbourSolution, int i, int t, int t_orig);
   //void delta2Compute(Solution * neighbourSolution, int i, int j);
   int iterCount; //step counter
-  int * eventList;
+  //int * eventList;
   int * tabuList; // tabu list of events
   bool tabu(move);
   void setTabu(move);

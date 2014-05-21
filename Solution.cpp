@@ -5,7 +5,7 @@ Solution::Solution(Problem* pd, Random* rnd) {
 
 	data = pd;
 	rg = rnd;
-        eventList = new int [data->n_of_events];
+        //eventList = new int [data->n_of_events];
 	slnInit();
 }
 
@@ -1251,9 +1251,7 @@ void Solution::LS2(int maxSteps, double LS_limit, double prob1){
             wt = i->first;
             bigPenalty = i->second;
         }
-    }
-    // now we have wt
-    //vector<int> eventList = suffle(timeslot_events[wt]);    
+    }  
     
     map<int, int> ev_timeslot;
     Solution * neiborSolution = new Solution( data, rg );    
