@@ -74,7 +74,6 @@ class Solution{
   void setTabu(move m, int *tabuList, int iterCount);
   void LS2(int maxSteps, double LS_limit = 999999, double prob1 = 1.0);
   
- private:
   // data structure for the matching algorithm
   int** size; 
   int** flow;
@@ -88,6 +87,7 @@ class Solution{
   int affectedRoomInTimeslotHcv( int t); // evaluate all the room hcv as above for all the events in timeslot t
   int eventScv(int e);   // evaluate number of scv caused by event e
   int singleClassesScv(int e); // evaluate the number of single classes that event e actually solves in the day (or created if e leaves its timeslot)
+private:
   void maxMatching(int V);    // do the max cardinality matching using a deterministic network flow algorithm
   bool networkFlow(int V);  // network flow algorithm
   vector<int> suffle(vector<int> source);

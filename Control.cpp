@@ -15,13 +15,15 @@ Control::Control( int argc, char** argv ) {
             {"seed", required_argument, 0, 's'},
             {"time", required_argument, 0, 't'},
             {"LS1", no_argument, 0, 301},
-            {"LS2", no_argument, 0, 302}
+            {"LS2", no_argument, 0, 302},
+            {"time2", required_argument, 0, 303}
         };
-        c = getopt_long(argc, argv, "hi:o:m:n:g:s:t:", long_option, &opt_index);
+        c = getopt_long(argc, argv, "hi:o:m:n:g:s:t:a:", long_option, &opt_index);
         if (c == -1) break;
         switch(c){
             case 'h':
                 cout << "This is MOHA help." << endl;
+                cout << " -a \t\t Method Number 101=NSGA2, 102=NSGA+TS." << endl;
                 cout << " -g, --gen \t Generation number" << endl;
                 cout << " -i, --input \t Input path." << endl;
                 cout << " -m \t\t Max step number in local search." << endl;
@@ -29,9 +31,13 @@ Control::Control( int argc, char** argv ) {
                 cout << " -o, --output \t Output path. Default is screen." << endl;
                 cout << " -s, --seed \t Set random seed" << endl;
                 cout << " -t, --time \t Set limit time" << endl;
+                cout << " --time2 \t Set limit time 2 for hybrid" << endl;
                 cout << " --LS1 \t\t Enable LS1" << endl;
                 cout << " --LS2 \t\t Enable LS2" << endl;
                 exit(1);
+                break;
+            case 'a':
+                parameters["-a"] = optarg;
                 break;
             case 'g':
                 parameters["-g"] = optarg;
@@ -62,12 +68,21 @@ Control::Control( int argc, char** argv ) {
                 cout << "Enable: LS2" << endl;
                 flag["LS2"] = true;
                 break;
+            case 303:
+                parameters["-t2"] = optarg;
+                break;
         }
     }
 			
 	nrTry = 0;
 	
 	// check for input parameter
+        if( parameterExists( "-a" ) ) {
+		method = getIntParameter( "-a" );
+	} else {
+            cerr << "Error: Not Found -a option please read help (-h)" << endl;
+            exit(1);
+        }
 	
 	if( parameterExists( "-i") ) {
 		is = new ifstream( getStringParameter( "-i" ).c_str() );
@@ -112,6 +127,13 @@ Control::Control( int argc, char** argv ) {
 	} else {
 		cerr << "Warning: Time limit is set to default (90 sec)" << endl;
 		timeLimit = 90; // default time limit
+	}
+        
+        if( parameterExists( "-t2" ) ) {
+		timeLimit2 = getDoubleParameter( "-t2" );
+		cout << "Time limit2 " << timeLimit2 << endl;
+	} else {
+		timeLimit2 = 0; // default time limit
 	}
 
         // check for problem instance type parameter for the local search
@@ -330,4 +352,3 @@ void Control::endTry(VectorSolution vs) {
     (*os) << "end solution " << nrTry << endl;
     (*os) << "end try " << nrTry << endl;
 }
-
