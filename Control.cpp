@@ -16,7 +16,8 @@ Control::Control( int argc, char** argv ) {
             {"time", required_argument, 0, 't'},
             {"LS1", no_argument, 0, 301},
             {"LS2", no_argument, 0, 302},
-            {"time2", required_argument, 0, 303}
+            {"time2", required_argument, 0, 303},
+            {"alfa", required_argument, 0, 304}
         };
         c = getopt_long(argc, argv, "hi:o:m:n:g:s:t:a:", long_option, &opt_index);
         if (c == -1) break;
@@ -34,6 +35,7 @@ Control::Control( int argc, char** argv ) {
                 cout << " --time2 \t Set limit time 2 for hybrid" << endl;
                 cout << " --LS1 \t\t Enable LS1" << endl;
                 cout << " --LS2 \t\t Enable LS2" << endl;
+                cout << " --alfa \t Set alfa for ts" << endl;
                 exit(1);
                 break;
             case 'a':
@@ -70,6 +72,9 @@ Control::Control( int argc, char** argv ) {
                 break;
             case 303:
                 parameters["-t2"] = optarg;
+                break;
+            case 304:
+                parameters["-alfa"] = optarg;
                 break;
         }
     }
