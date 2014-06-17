@@ -611,21 +611,21 @@ void tabuSearchMO(VectorSolution &archiveSet,int archSize, double limitTime, dou
             pushToArchive(temp[k], archiveSet, archSize, pb);
             delete temp[k];
         }
-        temp.clear();        
+        temp.clear();
     }
     delete nbh_sol;
     delete best_nbh_sol;
     delete best_sol;
 }
 
-int main(int argc, char** argv) {    
+int main(int argc, char** argv) {
     VectorSolution popu, front0, archiveSet;
     Control control(argc, argv);
     ostream& os = control.getOutputStream();
     //int problemType = control.getProblemType();
     int popSize = 50;
     int archSize = 20;
-    
+
     Problem *problem = new Problem(control.getInputStream());
 
     rnd = new Random((unsigned) control.getSeed());
