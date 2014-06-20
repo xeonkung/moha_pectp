@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="84">
+<configurationDescriptor version="94">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
-    <df name="moha_pectp" root=".">
+    <df root="." name="0">
       <in>Control.cpp</in>
       <in>Control.h</in>
       <in>Distance.cpp</in>
-      <in>Distance.h</in>
       <in>ObjectiveCmp.cpp</in>
-      <in>ObjectiveCmp.h</in>
       <in>Problem.cpp</in>
       <in>Problem.h</in>
       <in>Random.cc</in>
       <in>Random.h</in>
-      <in>Ranking.cpp</in>
-      <in>Ranking.h</in>
       <in>Solution.cpp</in>
       <in>Solution.h</in>
       <in>Timer.C</in>
@@ -38,8 +34,9 @@
   <confs>
     <conf name="Default" type="0">
       <toolsSet>
-        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>default</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <codeAssistance>
       </codeAssistance>
@@ -51,6 +48,38 @@
           <executablePath>nsga</executablePath>
         </makeTool>
       </makefileType>
+      <item path="Control.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Control.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Distance.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ObjectiveCmp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Problem.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Problem.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Random.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Random.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Solution.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Solution.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Timer.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Timer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ga.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="move.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="util.h" ex="false" tool="3" flavor2="0">
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>

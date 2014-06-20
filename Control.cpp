@@ -17,7 +17,9 @@ Control::Control( int argc, char** argv ) {
             {"LS1", no_argument, 0, 301},
             {"LS2", no_argument, 0, 302},
             {"time2", required_argument, 0, 303},
-            {"alfa", required_argument, 0, 304}
+            {"alfa", required_argument, 0, 304},
+            {"pts1", required_argument, 0, 305},
+            {"pts2", required_argument, 0, 306}
         };
         c = getopt_long(argc, argv, "hi:o:m:n:g:s:t:a:", long_option, &opt_index);
         if (c == -1) break;
@@ -36,6 +38,9 @@ Control::Control( int argc, char** argv ) {
                 cout << " --LS1 \t\t Enable LS1" << endl;
                 cout << " --LS2 \t\t Enable LS2" << endl;
                 cout << " --alfa \t Set alfa for ts" << endl;
+                cout << " --pts1 \t Set alfa for ts" << endl;
+                cout << " --pts2 \t Set alfa for ts" << endl;
+                
                 exit(1);
                 break;
             case 'a':
@@ -75,6 +80,12 @@ Control::Control( int argc, char** argv ) {
                 break;
             case 304:
                 parameters["-alfa"] = optarg;
+                break;
+            case 305:
+                parameters["pts1"] = optarg;
+                break;
+            case 306:
+                parameters["pts2"] = optarg;
                 break;
         }
     }
@@ -215,6 +226,23 @@ Control::Control( int argc, char** argv ) {
 		cerr << "Warning: " << seed << " used as default random seed" << endl;
 		srand( seed );
 	}
+        
+        if( parameterExists( "pts1" ) ) {
+		pts1 = getDoubleParameter( "pts1" );
+		cout << "TS N1 probability " << pts1 <<  endl;
+	} else {
+//		cerr << "Warning: The local search move 3 probability is set to default 1.0" << endl;
+		pts1 = 0.1; // default local search probability for each move to be performed
+	}
+        
+        if( parameterExists( "pts2" ) ) {
+		pts2 = getDoubleParameter( "pts2" );
+		cout <<"TS N2 probability " << pts2 <<  endl;
+	} else {
+//		cerr << "Warning: The local search move 3 probability is set to default 1.0" << endl;
+		pts2 = 0.1; // default local search probability for each move to be performed
+	}
+        
 }
 
 Control::~Control() {
