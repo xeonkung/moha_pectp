@@ -41,8 +41,8 @@ Control::Control( int argc, char** argv ) {
                 cout << " --LS1 \t\t Enable LS1" << endl;
                 cout << " --LS2 \t\t Enable LS2" << endl;
                 cout << " --alfa \t Set alfa for ts" << endl;
-                cout << " --pts1 \t Set alfa for ts" << endl;
-                cout << " --pts2 \t Set alfa for ts" << endl;
+                cout << " --pts1 \t N1 Prob. for ts" << endl;
+                cout << " --pts2 \t N2 Prob. for ts" << endl;
                 cout << " --pop \t Set popsize default = 50" << endl;
                 cout << " --pc \t Crossover Prob. default = 0.8" << endl;
                 cout << " --pm \t Mutation Prob. default = 0.5" << endl;
