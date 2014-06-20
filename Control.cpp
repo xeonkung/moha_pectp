@@ -19,7 +19,8 @@ Control::Control( int argc, char** argv ) {
             {"time2", required_argument, 0, 303},
             {"alfa", required_argument, 0, 304},
             {"pts1", required_argument, 0, 305},
-            {"pts2", required_argument, 0, 306}
+            {"pts2", required_argument, 0, 306},
+            {"pop", required_argument, 0, 307}
         };
         c = getopt_long(argc, argv, "hi:o:m:n:g:s:t:a:", long_option, &opt_index);
         if (c == -1) break;
@@ -40,6 +41,7 @@ Control::Control( int argc, char** argv ) {
                 cout << " --alfa \t Set alfa for ts" << endl;
                 cout << " --pts1 \t Set alfa for ts" << endl;
                 cout << " --pts2 \t Set alfa for ts" << endl;
+                cout << " --pop \t Set popsize default = 50" << endl;
                 
                 exit(1);
                 break;
@@ -86,6 +88,9 @@ Control::Control( int argc, char** argv ) {
                 break;
             case 306:
                 parameters["pts2"] = optarg;
+                break;
+            case 307:
+                parameters["pop"] = optarg;
                 break;
         }
     }
@@ -241,6 +246,13 @@ Control::Control( int argc, char** argv ) {
 	} else {
 //		cerr << "Warning: The local search move 3 probability is set to default 1.0" << endl;
 		pts2 = 0.1; // default local search probability for each move to be performed
+	}
+        if( parameterExists( "pop" ) ) {
+		popSize = getIntParameter( "pop" );
+		cout <<"set popsize to " << popSize <<  endl;
+	} else {
+//		cerr << "Warning: The local search move 3 probability is set to default 1.0" << endl;
+		popSize = 50; // default local search probability for each move to be performed
 	}
         
 }

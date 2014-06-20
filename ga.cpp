@@ -629,7 +629,7 @@ int main(int argc, char** argv) {
     Control control(argc, argv);
     ostream& os = control.getOutputStream();
     //int problemType = control.getProblemType();
-    int popSize = 50;
+    int popSize = control.getPOPSize();
     int archSize = 20;
 
     Problem *problem = new Problem(control.getInputStream());

@@ -38,7 +38,7 @@ private:
 	ostream *os;
 	istream *is;
         int gen, limitGen;
-	int method;
+	int method, popSize;
 public:
 	Control( int, char** ); // construct a control object, given a set of command line options
 	~Control();
@@ -75,6 +75,7 @@ public:
         map<string, bool> flag;
         double getTS_N1Prob() {return pts1;}
         double getTS_N2Prob() {return pts2;}
+        double getPOPSize() {return popSize;}
         
         /* Const */
         static const int METHOD_NSGA = 101;
