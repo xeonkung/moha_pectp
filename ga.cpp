@@ -453,7 +453,7 @@ void tabuSearchMO(VectorSolution &archiveSet, int archSize, Control &control, Pr
                 int t_orig = temp[k]->sln[eventList[i]].first;
                 for (int h = 0, t = t_start; h < 45; t = (t + 1) % 45, h++) {
                     if (timer.elapsedTime(Timer::VIRTUAL) > limitTime) break;
-                    if (rnd->next() < 0.1) {
+                    if (rnd->next() < control.getTS_N1Prob()) {
                         nbh_sol->copy(temp[k]);
                         nbh_sol->Move1(eventList[i], t);
                         int neighbourAffectedHcv = nbh_sol->eventAffectedHcv(eventList[i]) + nbh_sol->affectedRoomInTimeslotHcv(t_orig);
@@ -524,7 +524,7 @@ void tabuSearchMO(VectorSolution &archiveSet, int archSize, Control &control, Pr
                 }
                 for (int j = (i + 1) % pb->n_of_events; j != i; j = (j + 1) % pb->n_of_events) { // try moves of type 2
                     if (timer.elapsedTime(Timer::VIRTUAL) > limitTime) break;
-                    if (rnd->next() < 0.1) {
+                    if (rnd->next() < control.getTS_N2Prob()) {
                         nbh_sol->copy(temp[k]);
                         nbh_sol->Move2(eventList[i], eventList[j]);
                         int newHcv;
