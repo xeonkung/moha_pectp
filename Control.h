@@ -33,7 +33,7 @@ private:
 	int problemType; 
 	int maxSteps;
 	double LS_limit;
-	double prob1, prob2, prob3, pts1, pts2;
+	double prob1, prob2, prob3, pts1, pts2, pm, pc;
         int tsMaxSteps;
 	ostream *os;
 	istream *is;
@@ -75,7 +75,9 @@ public:
         map<string, bool> flag;
         double getTS_N1Prob() {return pts1;}
         double getTS_N2Prob() {return pts2;}
-        double getPOPSize() {return popSize;}
+        int getPOPSize() {return popSize;}
+        double getPM() {return pm;}
+        double getPC() {return pc;}
         
         /* Const */
         static const int METHOD_NSGA = 101;

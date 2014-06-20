@@ -20,7 +20,9 @@ Control::Control( int argc, char** argv ) {
             {"alfa", required_argument, 0, 304},
             {"pts1", required_argument, 0, 305},
             {"pts2", required_argument, 0, 306},
-            {"pop", required_argument, 0, 307}
+            {"pop", required_argument, 0, 307},
+            {"pm", required_argument, 0, 308},
+            {"pc", required_argument, 0, 309}
         };
         c = getopt_long(argc, argv, "hi:o:m:n:g:s:t:a:", long_option, &opt_index);
         if (c == -1) break;
@@ -42,6 +44,8 @@ Control::Control( int argc, char** argv ) {
                 cout << " --pts1 \t Set alfa for ts" << endl;
                 cout << " --pts2 \t Set alfa for ts" << endl;
                 cout << " --pop \t Set popsize default = 50" << endl;
+                cout << " --pc \t Crossover Prob. default = 0.8" << endl;
+                cout << " --pm \t Mutation Prob. default = 0.5" << endl;
                 
                 exit(1);
                 break;
@@ -91,6 +95,12 @@ Control::Control( int argc, char** argv ) {
                 break;
             case 307:
                 parameters["pop"] = optarg;
+                break;
+            case 308:
+                parameters["pm"] = optarg;
+                break;
+            case 309:
+                parameters["pc"] = optarg;
                 break;
         }
     }
@@ -253,6 +263,22 @@ Control::Control( int argc, char** argv ) {
 	} else {
 //		cerr << "Warning: The local search move 3 probability is set to default 1.0" << endl;
 		popSize = 50; // default local search probability for each move to be performed
+	}
+        if( parameterExists( "pc" ) ) {
+		pc = getDoubleParameter( "pc" );
+		cout <<"Crossover probability " << pc <<  endl;
+	} else {
+//		cerr << "Warning: The local search move 3 probability is set to default 1.0" << endl;
+		pc = 0.8; // default local search probability for each move to be performed
+                cerr <<"Crossover probability " << pc <<  endl;
+	}
+        if( parameterExists( "pm" ) ) {
+		pm = getDoubleParameter( "pm" );
+		cout << "Mutation probability " << pm <<  endl;
+	} else {
+//		cerr << "Warning: The local search move 3 probability is set to default 1.0" << endl;
+		pm = 0.5; // default local search probability for each move to be performed
+                cerr << "Mutation probability " << pm <<  endl;
 	}
         
 }

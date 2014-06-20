@@ -664,14 +664,14 @@ int main(int argc, char** argv) {
             Solution* parent2 = selection5(popu);
 
             // generate child
-            if (rnd->next() < 0.9)
+            if (rnd->next() < control.getPC())
                 child->crossover(parent1, parent2);
             else {
                 child->copy(parent1);
             }
 
             // do some mutation
-            if (rnd->next() < 0.6) {
+            if (rnd->next() < control.getPM()) {
                 child->mutation();
             }
 
