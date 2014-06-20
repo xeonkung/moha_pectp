@@ -654,45 +654,47 @@ int main(int argc, char** argv) {
             archiveSet[i]->copy(front0[i]);
         }
         control.setCurrentCost(popu[0]);
-        while (control.timeLeft()) {
+        if (control.getMethod() == Control::METHOD_NSGA || control.getMethod() == Control::METHOD_MOHA) {
+            while (control.timeLeft()) {
 
-            // start reproduction (steady-state GA)
-            Solution* child = new Solution(problem, rnd);
+                // start reproduction (steady-state GA)
+                Solution* child = new Solution(problem, rnd);
 
-            // select parents
-            Solution* parent1 = selection5(popu);
-            Solution* parent2 = selection5(popu);
+                // select parents
+                Solution* parent1 = selection5(popu);
+                Solution* parent2 = selection5(popu);
 
-            // generate child
-            if (rnd->next() < control.getPC())
-                child->crossover(parent1, parent2);
-            else {
-                child->copy(parent1);
-            }
+                // generate child
+                if (rnd->next() < control.getPC())
+                    child->crossover(parent1, parent2);
+                else {
+                    child->copy(parent1);
+                }
 
-            // do some mutation
-            if (rnd->next() < control.getPM()) {
-                child->mutation();
-            }
+                // do some mutation
+                if (rnd->next() < control.getPM()) {
+                    child->mutation();
+                }
 
-            //apply local search to offspring
-            if (control.flag["LS1"])
-                child->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
-            if (control.flag["LS2"])
-                child->LS2(control.getMaxSteps(), control.getTimeLimit());
-            //child->tabuSearch(10, control.alfa);
-            //evaluate the offspring
-            child->computePenalty();
-            generation++;
-            //new_gen
-            pushToArchive(child, archiveSet, archSize, problem);
-            front0 = rankSolution(popu, problem, child);
-            control.setCurrentCost(popu[0]);
-        }// while
+                //apply local search to offspring
+                if (control.flag["LS1"])
+                    child->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
+                if (control.flag["LS2"])
+                    child->LS2(control.getMaxSteps(), control.getTimeLimit());
+                //child->tabuSearch(10, control.alfa);
+                //evaluate the offspring
+                child->computePenalty();
+                generation++;
+                //new_gen
+                pushToArchive(child, archiveSet, archSize, problem);
+                front0 = rankSolution(popu, problem, child);
+                control.setCurrentCost(popu[0]);
+            }// while
 
-        control.endTry(front0);
-        printSolutions(archiveSet, control.getOutputStream());
-        if (control.getMethod() == Control::METHOD_MOHA) {
+            control.endTry(front0);
+            printSolutions(archiveSet, control.getOutputStream());
+        }
+        if (control.getMethod() == Control::METHOD_MOHA || control.getMethod() == Control::METHOD_MOTS) {
             os << "MOTS started!!" << endl;
             tabuSearchMO(archiveSet, archSize, control, problem);
             printSolutions(archiveSet, control.getOutputStream());
