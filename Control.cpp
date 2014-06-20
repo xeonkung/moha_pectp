@@ -280,7 +280,9 @@ Control::Control( int argc, char** argv ) {
 		pm = 0.5; // default local search probability for each move to be performed
                 cerr << "Mutation probability " << pm <<  endl;
 	}
-        
+        if (method == METHOD_MOTS){
+            timeLimit2 = timeLimit;
+        }
 }
 
 Control::~Control() {
