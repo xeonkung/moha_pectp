@@ -192,7 +192,7 @@ void tabuSearch(Solution* c, Control &control, Problem* pb) {
     int *tabuList = new int [pb->n_of_events]; // tabu list of events
     int ts_iter = 0;
     int max_step = control.getTS_maxSteps();
-    double timeLimit = control.getTimeLimit2();
+    double timeLimit = 9999.0;
     const int ts_size = (int) (control.alfa * (double) pb->n_of_events);
     for (int i = 0; i < pb->n_of_events; i++) {
         tabuList[i] = -ts_size; //initialize tabu list
