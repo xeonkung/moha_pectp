@@ -660,7 +660,7 @@ int main(int argc, char** argv) {
             archiveSet[i]->copy(front0[i]);
         }
         control.setCurrentCost(popu[0]);
-        if (control.getMethod() == Control::METHOD_NSGA || control.getMethod() == Control::METHOD_MOHA) {
+        if (control.getMethod() == Control::METHOD_NSGA || control.getMethod() == Control::METHOD_MOHA || control.getMethod() == Control::METHOD_MOHA2) {
             while (control.timeLeft()) {
 
                 // start reproduction (steady-state GA)
