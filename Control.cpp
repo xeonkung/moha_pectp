@@ -29,7 +29,7 @@ Control::Control( int argc, char** argv ) {
         switch(c){
             case 'h':
                 cout << "This is MOHA help." << endl;
-                cout << " -a \t\t Method Number 101=NSGA2, 102=NSGA+MOTS, 103=MOTS." << endl;
+                cout << " -a \t\t Method Number 101=NSGA2, 102=NSGA+MOTS, 103=MOTS, 104=NSGA[TS]." << endl;
                 cout << " -g, --gen \t Generation number" << endl;
                 cout << " -i, --input \t Input path." << endl;
                 cout << " -m \t\t Max step number in local search." << endl;

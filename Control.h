@@ -83,6 +83,7 @@ public:
         static const int METHOD_NSGA = 101;
         static const int METHOD_MOHA = 102;
         static const int METHOD_MOTS = 103;
+        static const int METHOD_MOHA2 = 104;
 };
 
 #endif
