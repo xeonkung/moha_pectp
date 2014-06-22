@@ -183,7 +183,7 @@ void pushToArchive(Solution* a, VectorSolution &archive, int size, Problem* pb) 
     }
 }
 
-void tabuSearch(Solution* c, double limitTime, double alfa, Problem* pb) {
+void tabuSearch(Solution* c, Control &control, Problem* pb) {
     Timer timer;
     Solution *nbh_sol = new Solution(pb, rnd),
             *best_sol = new Solution(pb, rnd),
@@ -191,7 +191,9 @@ void tabuSearch(Solution* c, double limitTime, double alfa, Problem* pb) {
     int eventList[pb->n_of_events]; // keep a list of events to go through
     int *tabuList = new int [pb->n_of_events]; // tabu list of events
     int ts_iter = 0;
-    const int ts_size = (int) (alfa * (double) pb->n_of_events);
+    int max_step = control.getTS_maxSteps();
+    double timeLimit = control.getTimeLimit2();
+    const int ts_size = (int) (control.alfa * (double) pb->n_of_events);
     for (int i = 0; i < pb->n_of_events; i++) {
         tabuList[i] = -ts_size; //initialize tabu list
         eventList[i] = i;
@@ -209,14 +211,14 @@ void tabuSearch(Solution* c, double limitTime, double alfa, Problem* pb) {
     int bestHcv = c->hcv; //set equal to the hcv of the first found solution
     int bestScv;
     bestScv = bestHcv != 0 ? c->scv : 99999;
-    while (timer.elapsedTime(Timer::VIRTUAL) < limitTime) {
+    while (timer.elapsedTime(Timer::VIRTUAL) < timeLimit && ts_iter < max_step) {
         int evCount = 0; // counter of events considered
         // reset
         bestMove[0] = -1;
         bestMove[1] = 9999;
         bestMove[2] = 9999;
         ts_iter++;
-        while (evCount < pb->n_of_events && timer.elapsedTime(Timer::VIRTUAL) < limitTime) {
+        while (evCount < pb->n_of_events && timer.elapsedTime(Timer::VIRTUAL) < timeLimit && ts_iter < max_step) {
             i = (i + 1) % pb->n_of_events; //next event
             int currentHcv = c->eventHcv(eventList[i]);
             int currentScv = c->eventScv(eventList[i]);
@@ -229,47 +231,21 @@ void tabuSearch(Solution* c, double limitTime, double alfa, Problem* pb) {
             int t_start = (int) (rnd->next()*45); // try moves of type 1
             int t_orig = c->sln[eventList[i]].first;
             for (int h = 0, t = t_start; h < 45; t = (t + 1) % 45, h++) {
-                if (timer.elapsedTime(Timer::VIRTUAL) > limitTime) break;
-                nbh_sol->copy(c);
-                nbh_sol->Move1(eventList[i], t);
-                int neighbourAffectedHcv = nbh_sol->eventAffectedHcv(eventList[i]) + nbh_sol->affectedRoomInTimeslotHcv(t_orig);
-                int currentAffectedHcv = c->eventAffectedHcv(eventList[i]) + c->affectedRoomInTimeslotHcv(t);
-                int delta1Hcv = neighbourAffectedHcv - currentAffectedHcv;
-                int newHcv = c->hcv + delta1Hcv;
-                if (newHcv < bestHcv) {
-                    c->copy(nbh_sol);
-                    c->hcv = newHcv;
-                    // set tabu
-                    tabuList[i] = ts_iter;
-                    bestHcv = newHcv;
-                    if (c->hcv == 0) c->computeScv();
-                    evCount = 0;
-                    ts_iter++;
-                    foundbetter = true;
-                    // reset
-                    bestMove[0] = -1;
-                    bestMove[1] = 9999;
-                    bestMove[2] = 9999;
-                    break;
-                } else if (newHcv == 0) {
-                    int newScv;
-                    if (c->hcv == 0) {
-                        int neighbourScv = nbh_sol->eventScv(eventList[i]) + // respectively Scv involving event e
-                                c->singleClassesScv(eventList[i]) - // + single classes introduced in day of original timeslot
-                                nbh_sol->singleClassesScv(eventList[i]); // - single classes "solved" in new day
-                        int delta1Scv = neighbourScv - c->eventScv(eventList[i]);
-                        newScv = c->scv + delta1Scv;
-                    } else {
-                        nbh_sol->computeScv();
-                        newScv = nbh_sol->scv;
-                    }
-                    if (newScv < bestScv) {
+                if (timer.elapsedTime(Timer::VIRTUAL) > timeLimit || ts_iter > max_step) break;
+                if (rnd->next() < control.getTS_N1Prob()) {
+                    nbh_sol->copy(c);
+                    nbh_sol->Move1(eventList[i], t);
+                    int neighbourAffectedHcv = nbh_sol->eventAffectedHcv(eventList[i]) + nbh_sol->affectedRoomInTimeslotHcv(t_orig);
+                    int currentAffectedHcv = c->eventAffectedHcv(eventList[i]) + c->affectedRoomInTimeslotHcv(t);
+                    int delta1Hcv = neighbourAffectedHcv - currentAffectedHcv;
+                    int newHcv = c->hcv + delta1Hcv;
+                    if (newHcv < bestHcv) {
                         c->copy(nbh_sol);
                         c->hcv = newHcv;
-                        c->scv = newScv;
                         // set tabu
                         tabuList[i] = ts_iter;
-                        bestScv = newScv;
+                        bestHcv = newHcv;
+                        if (c->hcv == 0) c->computeScv();
                         evCount = 0;
                         ts_iter++;
                         foundbetter = true;
@@ -278,17 +254,45 @@ void tabuSearch(Solution* c, double limitTime, double alfa, Problem* pb) {
                         bestMove[1] = 9999;
                         bestMove[2] = 9999;
                         break;
-                    } else if ((tabuList[i] + ts_size) <= ts_iter && newScv < bestMove[2]) {//memorize the best found non improving neighbouring solution
+                    } else if (newHcv == 0) {
+                        int newScv;
+                        if (c->hcv == 0) {
+                            int neighbourScv = nbh_sol->eventScv(eventList[i]) + // respectively Scv involving event e
+                                    c->singleClassesScv(eventList[i]) - // + single classes introduced in day of original timeslot
+                                    nbh_sol->singleClassesScv(eventList[i]); // - single classes "solved" in new day
+                            int delta1Scv = neighbourScv - c->eventScv(eventList[i]);
+                            newScv = c->scv + delta1Scv;
+                        } else {
+                            nbh_sol->computeScv();
+                            newScv = nbh_sol->scv;
+                        }
+                        if (newScv < bestScv) {
+                            c->copy(nbh_sol);
+                            c->hcv = newHcv;
+                            c->scv = newScv;
+                            // set tabu
+                            tabuList[i] = ts_iter;
+                            bestScv = newScv;
+                            evCount = 0;
+                            ts_iter++;
+                            foundbetter = true;
+                            // reset
+                            bestMove[0] = -1;
+                            bestMove[1] = 9999;
+                            bestMove[2] = 9999;
+                            break;
+                        } else if ((tabuList[i] + ts_size) <= ts_iter && newScv < bestMove[2]) {//memorize the best found non improving neighbouring solution
+                            best_nbh_sol->copy(nbh_sol);
+                            bestMove[0] = i;
+                            bestMove[1] = 0;
+                            bestMove[2] = newScv;
+                        }
+                    } else if ((tabuList[i] + ts_size) <= ts_iter && newHcv < bestMove[1]) {
                         best_nbh_sol->copy(nbh_sol);
                         bestMove[0] = i;
-                        bestMove[1] = 0;
-                        bestMove[2] = newScv;
+                        bestMove[1] = newHcv;
+                        bestMove[2] = 9999;
                     }
-                } else if ((tabuList[i] + ts_size) <= ts_iter && newHcv < bestMove[1]) {
-                    best_nbh_sol->copy(nbh_sol);
-                    bestMove[0] = i;
-                    bestMove[1] = newHcv;
-                    bestMove[2] = 9999;
                 }
             }
             if (foundbetter) {
@@ -297,61 +301,30 @@ void tabuSearch(Solution* c, double limitTime, double alfa, Problem* pb) {
                 continue;
             }
             for (int j = (i + 1) % pb->n_of_events; j != i; j = (j + 1) % pb->n_of_events) { // try moves of type 2
-                if (timer.elapsedTime(Timer::VIRTUAL) > limitTime) break;
-                nbh_sol->copy(c);
-                nbh_sol->Move2(eventList[i], eventList[j]);
-                int newHcv;
-                if (c->hcv == 0) {
-                    newHcv = nbh_sol->eventAffectedHcv(eventList[i]) +
-                            nbh_sol->eventAffectedHcv(eventList[j]);
-                } else {
-                    int neighbourAffectedHcv = nbh_sol->eventAffectedHcv(eventList[i]) +
-                            nbh_sol->eventAffectedHcv(eventList[j]);
-                    int currentAffectedHcv = c->eventAffectedHcv(eventList[i]) + c->eventAffectedHcv(eventList[j]);
-                    int delta2Hcv = neighbourAffectedHcv - currentAffectedHcv;
-                    newHcv = c->hcv + delta2Hcv;
-                }
-
-
-                if (newHcv < bestHcv) {
-                    c->copy(nbh_sol);
-                    c->hcv = newHcv;
-                    // set tabu
-                    tabuList[i] = ts_iter;
-                    bestHcv = newHcv;
-                    if (c->hcv == 0) c->computeScv();
-                    evCount = 0;
-                    ts_iter++;
-                    foundbetter = true;
-                    // reset
-                    bestMove[0] = -1;
-                    bestMove[1] = 9999;
-                    bestMove[2] = 9999;
-                    break;
-                } else if (newHcv == 0) {// only if no hcv are introduced by the move
-                    int newScv;
+                if (timer.elapsedTime(Timer::VIRTUAL) > timeLimit || ts_iter > max_step) break;
+                if (rnd->next() < control.getTS_N2Prob()) {
+                    nbh_sol->copy(c);
+                    nbh_sol->Move2(eventList[i], eventList[j]);
+                    int newHcv;
                     if (c->hcv == 0) {
-                        // compute alterations on scv for neighbour solution
-                        int neighbourScv = nbh_sol->eventScv(eventList[i]) +
-                                c->singleClassesScv(eventList[i]) -
-                                nbh_sol->singleClassesScv(eventList[i]) +
-                                nbh_sol->eventScv(eventList[j]) +
-                                c->singleClassesScv(eventList[j]) -
-                                nbh_sol->singleClassesScv(eventList[j]);
-
-                        int delta2Scv = neighbourScv - (c->eventScv(eventList[i]) + c->eventScv(eventList[j]));
-                        newScv = c->scv + delta2Scv;
+                        newHcv = nbh_sol->eventAffectedHcv(eventList[i]) +
+                                nbh_sol->eventAffectedHcv(eventList[j]);
                     } else {
-                        nbh_sol->computeScv();
-                        newScv = nbh_sol->scv;
+                        int neighbourAffectedHcv = nbh_sol->eventAffectedHcv(eventList[i]) +
+                                nbh_sol->eventAffectedHcv(eventList[j]);
+                        int currentAffectedHcv = c->eventAffectedHcv(eventList[i]) + c->eventAffectedHcv(eventList[j]);
+                        int delta2Hcv = neighbourAffectedHcv - currentAffectedHcv;
+                        newHcv = c->hcv + delta2Hcv;
                     }
-                    if (newScv < bestScv) {
+
+
+                    if (newHcv < bestHcv) {
                         c->copy(nbh_sol);
                         c->hcv = newHcv;
-                        c->scv = newScv;
                         // set tabu
                         tabuList[i] = ts_iter;
-                        bestScv = newScv;
+                        bestHcv = newHcv;
+                        if (c->hcv == 0) c->computeScv();
                         evCount = 0;
                         ts_iter++;
                         foundbetter = true;
@@ -360,19 +333,52 @@ void tabuSearch(Solution* c, double limitTime, double alfa, Problem* pb) {
                         bestMove[1] = 9999;
                         bestMove[2] = 9999;
                         break;
-                    } else if ((tabuList[i] + ts_size) <= ts_iter && newScv < bestMove[2]) {//memorize the best found non improving neighbouring solution
+                    } else if (newHcv == 0) {// only if no hcv are introduced by the move
+                        int newScv;
+                        if (c->hcv == 0) {
+                            // compute alterations on scv for neighbour solution
+                            int neighbourScv = nbh_sol->eventScv(eventList[i]) +
+                                    c->singleClassesScv(eventList[i]) -
+                                    nbh_sol->singleClassesScv(eventList[i]) +
+                                    nbh_sol->eventScv(eventList[j]) +
+                                    c->singleClassesScv(eventList[j]) -
+                                    nbh_sol->singleClassesScv(eventList[j]);
+
+                            int delta2Scv = neighbourScv - (c->eventScv(eventList[i]) + c->eventScv(eventList[j]));
+                            newScv = c->scv + delta2Scv;
+                        } else {
+                            nbh_sol->computeScv();
+                            newScv = nbh_sol->scv;
+                        }
+                        if (newScv < bestScv) {
+                            c->copy(nbh_sol);
+                            c->hcv = newHcv;
+                            c->scv = newScv;
+                            // set tabu
+                            tabuList[i] = ts_iter;
+                            bestScv = newScv;
+                            evCount = 0;
+                            ts_iter++;
+                            foundbetter = true;
+                            // reset
+                            bestMove[0] = -1;
+                            bestMove[1] = 9999;
+                            bestMove[2] = 9999;
+                            break;
+                        } else if ((tabuList[i] + ts_size) <= ts_iter && newScv < bestMove[2]) {//memorize the best found non improving neighbouring solution
+                            best_nbh_sol->copy(nbh_sol);
+                            bestMove[0] = i;
+                            bestMove[1] = 0;
+                            bestMove[2] = newScv;
+                        }
+                    } else if ((tabuList[i] + ts_size) <= ts_iter && newHcv < bestMove[1]) {
                         best_nbh_sol->copy(nbh_sol);
                         bestMove[0] = i;
-                        bestMove[1] = 0;
-                        bestMove[2] = newScv;
+                        bestMove[1] = newHcv;
+                        bestMove[2] = 9999;
                     }
-                } else if ((tabuList[i] + ts_size) <= ts_iter && newHcv < bestMove[1]) {
-                    best_nbh_sol->copy(nbh_sol);
-                    bestMove[0] = i;
-                    bestMove[1] = newHcv;
-                    bestMove[2] = 9999;
                 }
-            }//end if
+            }
             if (foundbetter) {
                 best_sol->copy(c);
                 foundbetter = false;
@@ -386,7 +392,7 @@ void tabuSearch(Solution* c, double limitTime, double alfa, Problem* pb) {
             c->hcv = bestMove[1];
             c->scv = bestMove[2];
             bestMove[0] = ts_iter;
-        } else if (timer.elapsedTime(Timer::VIRTUAL) < limitTime) {
+        } else if (timer.elapsedTime(Timer::VIRTUAL) < timeLimit && ts_iter < max_step) {
             c->randomMove();
             c->computeHcv();
             if (c->hcv == 0) {
@@ -681,6 +687,8 @@ int main(int argc, char** argv) {
                     child->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
                 if (control.flag["LS2"])
                     child->LS2(control.getMaxSteps(), control.getTimeLimit());
+                if (control.getMethod() == Control::METHOD_MOHA2)
+                    tabuSearch(child, control, problem);
                 //child->tabuSearch(10, control.alfa);
                 //evaluate the offspring
                 child->computePenalty();
