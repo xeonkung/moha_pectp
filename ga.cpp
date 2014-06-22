@@ -630,8 +630,7 @@ void tabuSearchMO(VectorSolution &archiveSet, int archSize, Control &control, Pr
     delete best_sol;
 }
 
-int main(int argc, char** argv) {
-    VectorSolution popu, front0, archiveSet;
+int main(int argc, char** argv) {    
     Control control(argc, argv);
     ostream& os = control.getOutputStream();
     //int problemType = control.getProblemType();
@@ -644,6 +643,7 @@ int main(int argc, char** argv) {
     while (control.triesLeft()) {
         control.beginTry();
         int generation = 0;
+        VectorSolution popu, front0, archiveSet;
         // Random generate solution
         for (int i = 0; i < popSize; i++) {
             popu.push_back(new Solution(problem, rnd));
