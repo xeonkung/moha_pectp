@@ -32,6 +32,7 @@ Control::Control(int argc, char** argv) {
             case 'h':
                 cout << "This is MOHA help." << endl;
                 cout << " -a \t\t Method Number 101=NSGA2, 102=NSGA+MOTS, 103=MOTS, 104=NSGA[TS]." << endl;
+                cout << "\t\t 201=SSGA, 202=SSGA[TS]." << endl;
                 cout << " -g, --gen \t Generation number" << endl;
                 cout << " -i, --input \t Input path." << endl;
                 cout << " -m \t\t Max step number in local search." << endl;
@@ -45,9 +46,9 @@ Control::Control(int argc, char** argv) {
                 cout << " --alfa \t Set alfa for ts" << endl;
                 cout << " --pts1 \t N1 Prob. for ts" << endl;
                 cout << " --pts2 \t N2 Prob. for ts" << endl;
-                cout << " --pop \t Set popsize default = 50" << endl;
-                cout << " --pc \t Crossover Prob. default = 0.8" << endl;
-                cout << " --pm \t Mutation Prob. default = 0.5" << endl;
+                cout << " --pop \t\t Set popsize default = 50" << endl;
+                cout << " --pc \t\t Crossover Prob. default = 0.8" << endl;
+                cout << " --pm \t\t Mutation Prob. default = 0.5" << endl;
                 cout << " --tsmax \t TS max step default = 9999" << endl;
 
                 exit(1);
@@ -286,7 +287,7 @@ Control::Control(int argc, char** argv) {
         pm = 0.5; // default local search probability for each move to be performed
         cerr << "Mutation probability " << pm << endl;
     }
-    if (method == METHOD_MOTS || method == METHOD_MOHA || method == METHOD_MOHA2) {
+    if (method == METHOD_MOTS || method == METHOD_MOHA || method == METHOD_MOHA2 || method == METHOD_SSGATS) {
         tsMaxSteps = parameterExists("tsmax") ? getIntParameter("tsmax") : 9999;
         cout << "TS maxStep :" << tsMaxSteps << endl;
     }

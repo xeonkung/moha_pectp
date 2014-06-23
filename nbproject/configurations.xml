@@ -10,6 +10,7 @@
       <in>Problem.h</in>
       <in>Random.cc</in>
       <in>Random.h</in>
+      <in>Ranking.cpp</in>
       <in>Solution.cpp</in>
       <in>Solution.h</in>
       <in>Timer.C</in>
@@ -19,6 +20,14 @@
       <in>util.cpp</in>
       <in>util.h</in>
     </df>
+    <df root="." name="1">
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
                    projectFiles="false"
@@ -28,6 +37,7 @@
   </logicalFolder>
   <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
   <sourceRootList>
+    <Elem>.</Elem>
     <Elem>.</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
@@ -63,6 +73,8 @@
       <item path="Random.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Random.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Ranking.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Solution.cpp" ex="false" tool="1" flavor2="0">
       </item>

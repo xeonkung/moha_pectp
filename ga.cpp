@@ -401,6 +401,7 @@ void tabuSearch(Solution* c, Control &control, Problem* pb) {
         }
     }
     c->copy(best_sol);
+    //cout << "TS:" << ts_iter << "\t/" << timer.elapsedTime(Timer::VIRTUAL) << "\t";
     delete nbh_sol;
     delete best_nbh_sol;
     delete best_sol;
@@ -630,10 +631,8 @@ void tabuSearchMO(VectorSolution &archiveSet, int archSize, Control &control, Pr
     delete best_sol;
 }
 
-int main(int argc, char** argv) {    
-    Control control(argc, argv);
+void MOGA(Control &control) {
     ostream& os = control.getOutputStream();
-    //int problemType = control.getProblemType();
     int popSize = control.getPOPSize();
     int archSize = 20;
 
@@ -715,10 +714,82 @@ int main(int argc, char** argv) {
             delete archiveSet[i];
         }
     }
-
     delete problem;
     delete rnd;
+}
 
+void GA(Control &control) {
+    int popSize = control.getPOPSize();
+    Problem *problem = new Problem(control.getInputStream());
+    rnd = new Random((unsigned) control.getSeed());
+    while (control.triesLeft()) {
+        control.beginTry();
+
+        int generation = 0;
+        VectorSolution pop;
+
+        for (int i = 0; i < popSize; i++) {
+            pop.push_back(new Solution(problem, rnd));
+            pop[i]->RandomInitialSolution();
+            if (control.flag["LS1"])
+                pop[i]->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
+            if (control.flag["LS2"])
+                pop[i]->LS2(control.getMaxSteps(), control.getTimeLimit());
+            pop[i]->computePenalty();
+        }
+        sort(pop.begin(), pop.end(), compareSolution);
+        control.setCurrentCost(pop[0]);
+
+        while (control.timeLeft()) {
+
+            // start reproduction (steady-state GA)
+            Solution* child = new Solution(problem, rnd);
+
+            // select parents
+            Solution* parent1 = selection(pop);
+            Solution* parent2 = selection(pop);
+
+            // generate child
+            if (rnd->next() < 0.8)
+                child->crossover(parent1, parent2);
+            else {
+                child->copy(parent1);
+            }
+
+            // do some mutation
+            if (rnd->next() < 0.5) {
+                child->mutation();
+            }
+
+            //apply local search to offspring
+            if (control.flag["LS1"])
+                child->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
+            if (control.flag["LS2"])
+                child->LS2(control.getMaxSteps(), control.getTimeLimit());
+            //tabu
+            if (control.getMethod() == Control::METHOD_SSGATS)
+                tabuSearch(child, control, problem);
+            //evaluate the offspring
+            child->computePenalty();
+            generation++;
+            // replace worst member of the population with offspring
+            pop[popSize - 1]->copy(child);
+            sort(pop.begin(), pop.end(), compareSolution);
+            control.setCurrentCost(pop[0]);
+            delete child;
+        }
+        for (int i = 0; i < popSize; i++) {
+            delete pop[i];
+        }
+    }
+    delete problem;
+    delete rnd;
+}
+
+int main(int argc, char** argv) {
+    Control control(argc, argv);
+    if (control.getMethod() / 100 == 1) MOGA(control);
+    if (control.getMethod() / 200 == 1) GA(control);
 }
 
 

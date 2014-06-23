@@ -84,6 +84,9 @@ public:
         static const int METHOD_MOHA = 102;
         static const int METHOD_MOTS = 103;
         static const int METHOD_MOHA2 = 104;
+        
+        static const int METHOD_SSGA = 201;
+        static const int METHOD_SSGATS = 202;       
 };
 
 #endif
