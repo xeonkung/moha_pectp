@@ -32,7 +32,7 @@ void Distance::crowdingDistanceAssignment(VectorSolution vSolution) {
     for(int i = 0; i < size; i++) {
         vSolution[i]->distance = 0.0;
     }
-    
+    if (vSolution[0]->hcv != 0) return;
     double min, max, dist;
     for(int i = 0; i < Solution::obj_N; i++) {
         ObjectiveCmp objCmp(i);

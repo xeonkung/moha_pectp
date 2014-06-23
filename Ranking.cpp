@@ -56,10 +56,10 @@ Ranking::Ranking(VectorSolution p) {
             }
         }
     }
-    Front = new VectorSolution[i+1];
+    Front = new VectorSolution[i];
     for (int j = 0; j < i; j++) {
-        for(int i = 0; i < (int)front[j].size(); i++){
-            Front[j].push_back(pop[front[j][i]]);
+        for(int k = 0; k < (int)front[j].size(); k++){
+            Front[j].push_back(pop[front[j][k]]);
         }
     }
     delete[] iDominate;
@@ -99,11 +99,9 @@ int Ranking::compareOverall(Solution* a, Solution* b){
     }else if(a->hcv > b->hcv){
         return 1;
     }else if(a->hcv != 0 && b->hcv != 0){
-        if(a->scv < b->scv) return -1;
-        else if (a->scv > b->scv) return 1;
-        else return 0;
-    }else{
         return 0;
+    }else{
+        return -2;
     }
 }
 
