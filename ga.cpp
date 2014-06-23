@@ -18,7 +18,7 @@ public:
   { return sol1->penalty < sol2->penalty;}
   }*/
 
-Solution* selection(VectorSolution pop) {
+Solution* selectionMO(VectorSolution pop) {
     int popSize = pop.size();
     // tournament selection with tornament size 2
     int first, second;
@@ -35,6 +35,18 @@ Solution* selection(VectorSolution pop) {
         else
             return pop[second];
     }
+}
+
+Solution* selection(VectorSolution pop) {
+    int popSize = pop.size();
+    // tournament selection with tornament size 2
+    int first, second;
+    first = (int) (rnd->next() * popSize);
+    second = (int) (rnd->next() * popSize);
+    if (pop[first]->penalty < pop[second]->penalty)
+        return (pop[first]);
+    else
+        return (pop[second]);
 }
 
 Solution* selection5(VectorSolution pop) {
@@ -666,8 +678,8 @@ void MOGA(Control &control) {
                 Solution* child = new Solution(problem, rnd);
 
                 // select parents
-                Solution* parent1 = selection5(popu);
-                Solution* parent2 = selection5(popu);
+                Solution* parent1 = selectionMO(popu);
+                Solution* parent2 = selectionMO(popu);
 
                 // generate child
                 if (rnd->next() < control.getPC())
@@ -724,10 +736,8 @@ void GA(Control &control) {
     rnd = new Random((unsigned) control.getSeed());
     while (control.triesLeft()) {
         control.beginTry();
-
         int generation = 0;
         VectorSolution pop;
-
         for (int i = 0; i < popSize; i++) {
             pop.push_back(new Solution(problem, rnd));
             pop[i]->RandomInitialSolution();
@@ -739,25 +749,22 @@ void GA(Control &control) {
         }
         sort(pop.begin(), pop.end(), compareSolution);
         control.setCurrentCost(pop[0]);
-
         while (control.timeLeft()) {
-
             // start reproduction (steady-state GA)
             Solution* child = new Solution(problem, rnd);
-
             // select parents
             Solution* parent1 = selection(pop);
             Solution* parent2 = selection(pop);
 
             // generate child
-            if (rnd->next() < 0.8)
+            if (rnd->next() < control.getPC())
                 child->crossover(parent1, parent2);
             else {
                 child->copy(parent1);
             }
 
             // do some mutation
-            if (rnd->next() < 0.5) {
+            if (rnd->next() < control.getPM()) {
                 child->mutation();
             }
 
@@ -778,6 +785,7 @@ void GA(Control &control) {
             control.setCurrentCost(pop[0]);
             delete child;
         }
+        control.endTry(pop[0]);
         for (int i = 0; i < popSize; i++) {
             delete pop[i];
         }
@@ -789,7 +797,7 @@ void GA(Control &control) {
 int main(int argc, char** argv) {
     Control control(argc, argv);
     if (control.getMethod() / 100 == 1) MOGA(control);
-    if (control.getMethod() / 200 == 1) GA(control);
+    else if (control.getMethod() / 200 == 1) GA(control);
 }
 
 
