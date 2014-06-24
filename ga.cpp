@@ -1,5 +1,4 @@
 #include <stdlib.h>
-
 #include "Control.h"
 #include "Problem.h"
 #include "Solution.h"
@@ -47,6 +46,24 @@ Solution* selection(VectorSolution pop) {
         return (pop[first]);
     else
         return (pop[second]);
+}
+
+Solution* selection5MO(VectorSolution pop) {
+    int popSize = pop.size();
+    // tournament selection with tornament size 5
+    int tournament[5];
+    int best;
+
+    tournament[0] = (int) (rnd->next() * popSize);
+
+    best = tournament[0];
+    for (int i = 1; i < 5; i++) {
+        tournament[i] = (int) (rnd->next() * popSize);
+        if (pop[tournament[i]]->rank < pop[best]->rank) best = tournament[i];
+        else if (pop[tournament[i]]->rank == pop[best]->rank)
+            if (pop[tournament[i]]->distance < pop[best]->distance) best = tournament[i];
+    }
+    return (pop[best]);
 }
 
 Solution* selection5(VectorSolution pop) {
@@ -678,8 +695,8 @@ void MOGA(Control &control) {
                 Solution* child = new Solution(problem, rnd);
 
                 // select parents
-                Solution* parent1 = selectionMO(popu);
-                Solution* parent2 = selectionMO(popu);
+                Solution* parent1 = selection5MO(popu);
+                Solution* parent2 = selection5MO(popu);
 
                 // generate child
                 if (rnd->next() < control.getPC())
@@ -709,9 +726,10 @@ void MOGA(Control &control) {
                 front0 = rankSolution(popu, problem, child);
                 control.setCurrentCost(popu[0]);
             }// while
-
-            control.endTry(front0);
-            printSolutions(archiveSet, control.getOutputStream());
+            printPOP(front0, control.getOutputStream());
+            control.endTry(archiveSet);
+            //control.endTry(front0);
+            //printSolutions(archiveSet, control.getOutputStream());
         }
         if (control.getMethod() == Control::METHOD_MOHA || control.getMethod() == Control::METHOD_MOTS) {
             os << "MOTS started!!" << endl;
@@ -753,8 +771,8 @@ void GA(Control &control) {
             // start reproduction (steady-state GA)
             Solution* child = new Solution(problem, rnd);
             // select parents
-            Solution* parent1 = selection(pop);
-            Solution* parent2 = selection(pop);
+            Solution* parent1 = selection5(pop);
+            Solution* parent2 = selection5(pop);
 
             // generate child
             if (rnd->next() < control.getPC())

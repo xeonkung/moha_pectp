@@ -98,10 +98,15 @@ int Ranking::compareOverall(Solution* a, Solution* b){
         return -1;
     }else if(a->hcv > b->hcv){
         return 1;
-    }else if(a->hcv != 0 && b->hcv != 0){
-        return 0;
-    }else{
-        return -2;
+    }else {
+        if (a->hcv == 0){
+//            if(a->scv < b->scv) return -1;
+//            else if (a->scv > b->scv) return 1;
+//            else return 0;
+            return 0;
+        }else{
+            return -2;
+        }
     }
 }
 

@@ -417,7 +417,6 @@ void Control::endTry(VectorSolution vs) {
     (*os) << "begin solution " << nrTry << endl;
     (*os) << "total time: " << getTime() << " gen: " << gen << endl;
     int size = (int) vs.size();
-    (*os) << "Front 0" << endl;
     for (int i = 0; i < size; i++) {
         (*os) << "solution " << (i + 1) << " = <";
         (*os) << vs[i]->hcv << " // ";

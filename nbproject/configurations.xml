@@ -4,13 +4,10 @@
     <df root="." name="0">
       <in>Control.cpp</in>
       <in>Control.h</in>
-      <in>Distance.cpp</in>
-      <in>ObjectiveCmp.cpp</in>
       <in>Problem.cpp</in>
       <in>Problem.h</in>
       <in>Random.cc</in>
       <in>Random.h</in>
-      <in>Ranking.cpp</in>
       <in>Solution.cpp</in>
       <in>Solution.h</in>
       <in>Timer.C</in>
@@ -21,7 +18,34 @@
       <in>util.h</in>
     </df>
     <df root="." name="1">
+      <in>Distance.cpp</in>
+      <in>ObjectiveCmp.cpp</in>
+      <in>Ranking.cpp</in>
     </df>
+    <df root="." name="2">
+    </df>
+    <df root="." name="3">
+    </df>
+    <df root="." name="4">
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
                    projectFiles="false"
@@ -37,7 +61,6 @@
   </logicalFolder>
   <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
   <sourceRootList>
-    <Elem>.</Elem>
     <Elem>.</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
@@ -55,7 +78,7 @@
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f Makefile</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
-          <executablePath>nsga</executablePath>
+          <executablePath>.</executablePath>
         </makeTool>
       </makefileType>
       <item path="Control.cpp" ex="false" tool="1" flavor2="0">
