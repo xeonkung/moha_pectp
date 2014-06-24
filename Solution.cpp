@@ -66,6 +66,7 @@ bool Solution::computeFeasibility() {
     }
     // if none of the previous hard constraint violations occurs the timetable is feasible
     feasible = true;
+    hcv = 0;
     return true;
 }
 
