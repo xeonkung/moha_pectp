@@ -716,8 +716,8 @@ void MOGA(Control &control) {
                 }
 
                 //apply local search to offspring
-                if (control.flag["LS1"])
-                    child->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
+                if (control.flag["LS1"] || control.flag["LS1E"])
+                    child->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3(), control.flag["LS1E"]);
                 if (control.flag["LS2"])
                     child->LS2(control.getMaxSteps(), control.getTimeLimit());
                 if (control.getMethod() == Control::METHOD_MOHA2)
@@ -790,8 +790,8 @@ void GA(Control &control) {
             }
 
             //apply local search to offspring
-            if (control.flag["LS1"])
-                child->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3(), true);
+            if (control.flag["LS1"] || control.flag["LS1E"])
+                child->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3(), control.flag["LS1E"]);
             if (control.flag["LS2"])
                 child->LS2(control.getMaxSteps(), control.getTimeLimit());
             //tabu
