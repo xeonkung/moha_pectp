@@ -212,7 +212,7 @@ void pushToArchive(Solution* a, VectorSolution &archive, int size, Problem* pb) 
     }
 }
 
-void tabuSearch(Solution* c, Control &control, Problem* pb) {
+void tabuSearch(Solution* c, Control &control, Problem* pb, bool showcost = false) {
     Timer timer;
     Solution *nbh_sol = new Solution(pb, rnd),
             *best_sol = new Solution(pb, rnd),
@@ -221,7 +221,7 @@ void tabuSearch(Solution* c, Control &control, Problem* pb) {
     int *tabuList = new int [pb->n_of_events]; // tabu list of events
     int ts_iter = 0;
     int max_step = control.getTS_maxSteps();
-    double timeLimit = 9999.0;
+    double timeLimit = control.getTimeLimit2();
     const int ts_size = (int) (control.alfa * (double) pb->n_of_events);
     for (int i = 0; i < pb->n_of_events; i++) {
         tabuList[i] = -ts_size; //initialize tabu list
@@ -282,6 +282,7 @@ void tabuSearch(Solution* c, Control &control, Problem* pb) {
                         bestMove[0] = -1;
                         bestMove[1] = 9999;
                         bestMove[2] = 9999;
+                        if (showcost) control.setCurrentCost(c);
                         break;
                     } else if (newHcv == 0) {
                         int newScv;
@@ -309,6 +310,7 @@ void tabuSearch(Solution* c, Control &control, Problem* pb) {
                             bestMove[0] = -1;
                             bestMove[1] = 9999;
                             bestMove[2] = 9999;
+                            if (showcost) control.setCurrentCost(c);
                             break;
                         } else if ((tabuList[i] + ts_size) <= ts_iter && newScv < bestMove[2]) {//memorize the best found non improving neighbouring solution
                             best_nbh_sol->copy(nbh_sol);
@@ -361,6 +363,7 @@ void tabuSearch(Solution* c, Control &control, Problem* pb) {
                         bestMove[0] = -1;
                         bestMove[1] = 9999;
                         bestMove[2] = 9999;
+                        if (showcost) control.setCurrentCost(c);
                         break;
                     } else if (newHcv == 0) {// only if no hcv are introduced by the move
                         int newScv;
@@ -393,6 +396,7 @@ void tabuSearch(Solution* c, Control &control, Problem* pb) {
                             bestMove[0] = -1;
                             bestMove[1] = 9999;
                             bestMove[2] = 9999;
+                            if (showcost) control.setCurrentCost(c);
                             break;
                         } else if ((tabuList[i] + ts_size) <= ts_iter && newScv < bestMove[2]) {//memorize the best found non improving neighbouring solution
                             best_nbh_sol->copy(nbh_sol);
@@ -426,6 +430,7 @@ void tabuSearch(Solution* c, Control &control, Problem* pb) {
             c->computeHcv();
             if (c->hcv == 0) {
                 c->computeScv();
+                if (showcost) control.setCurrentCost(c);
             }
         }
     }
@@ -803,6 +808,10 @@ void GA(Control &control) {
             control.setCurrentCost(pop[0]);
             delete child;
         }
+        if (control.getMethod() == Control::METHOD_GA_TS) {
+            control.getOutputStream() << "Start TS" << endl;
+            tabuSearch(pop[0], control, problem, true);
+        }
         control.endTry(pop[0]);
         for (int i = 0; i < popSize; i++) {
             delete pop[i];
@@ -812,10 +821,29 @@ void GA(Control &control) {
     delete rnd;
 }
 
+void TS(Control &control) {
+    Problem *problem = new Problem(control.getInputStream());
+    rnd = new Random((unsigned) control.getSeed());
+    while (control.triesLeft()) {
+        control.beginTry();
+        Solution *sol = new Solution(problem, rnd);
+        sol->RandomInitialSolution();
+        sol->computePenalty();
+        control.setCurrentCost(sol);
+        tabuSearch(sol, control, problem, true);
+        control.endTry(sol);
+        delete sol;
+    }
+
+    delete problem;
+    delete rnd;
+}
+
 int main(int argc, char** argv) {
     Control control(argc, argv);
     if (control.getMethod() / 100 == 1) MOGA(control);
     else if (control.getMethod() / 200 == 1) GA(control);
+    else if (control.getMethod() / 300 == 1) TS(control);
 }
 
 

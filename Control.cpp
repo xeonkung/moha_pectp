@@ -32,7 +32,7 @@ Control::Control(int argc, char** argv) {
             case 'h':
                 cout << "This is MOHA help." << endl;
                 cout << " -a \t\t Method Number 101=NSGA2, 102=NSGA+MOTS, 103=MOTS, 104=NSGA[TS]." << endl;
-                cout << "\t\t 201=SSGA, 202=SSGA[TS]." << endl;
+                cout << "\t\t 201=SSGA, 202=SSGA[TS], 203=SSGA+TS, 301=TS." << endl;
                 cout << " -g, --gen \t Generation number" << endl;
                 cout << " -i, --input \t Input path." << endl;
                 cout << " -m \t\t Max step number in local search." << endl;
@@ -153,7 +153,7 @@ Control::Control(int argc, char** argv) {
         limitGen = getIntParameter("-g");
         cout << "Max number of gens " << limitGen << endl;
     } else {
-        limitGen = 100000;
+        limitGen = 1000000;
         cerr << "Warning: Number of gens is set to default " << limitGen << endl;
     }
     gen = 0;
@@ -171,7 +171,7 @@ Control::Control(int argc, char** argv) {
         timeLimit2 = getDoubleParameter("-t2");
         cout << "Time limit2 " << timeLimit2 << endl;
     } else {
-        timeLimit2 = 0; // default time limit
+        timeLimit2 = 9999.0; // default time limit
     }
 
     // check for problem instance type parameter for the local search
@@ -287,11 +287,11 @@ Control::Control(int argc, char** argv) {
         pm = 0.5; // default local search probability for each move to be performed
         cerr << "Mutation probability " << pm << endl;
     }
-    if (method == METHOD_MOTS || method == METHOD_MOHA || method == METHOD_MOHA2 || method == METHOD_SSGATS) {
-        tsMaxSteps = parameterExists("tsmax") ? getIntParameter("tsmax") : 9999;
+    if (method == METHOD_MOTS || method == METHOD_MOHA || method == METHOD_MOHA2 || method == METHOD_SSGATS || method == METHOD_GA_TS || method == METHOD_TS) {
+        tsMaxSteps = parameterExists("tsmax") ? getIntParameter("tsmax") : 1000000;
         cout << "TS maxStep :" << tsMaxSteps << endl;
     }
-    if (method == METHOD_MOTS) {
+    if (method == METHOD_MOTS || method == METHOD_TS) {
         timeLimit2 = timeLimit;
     }
 }
