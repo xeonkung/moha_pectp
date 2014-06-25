@@ -730,17 +730,15 @@ void MOGA(Control &control) {
                 pushToArchive(child, archiveSet, archSize, problem);
                 front0 = rankSolution(popu, problem, child);
                 control.setCurrentCost(popu[0]);
-            }// while
-            printPOP(front0, control.getOutputStream());
-            control.endTry(archiveSet);
+            }// while            
             //control.endTry(front0);
             //printSolutions(archiveSet, control.getOutputStream());
         }
         if (control.getMethod() == Control::METHOD_MOHA || control.getMethod() == Control::METHOD_MOTS) {
             os << "MOTS started!!" << endl;
             tabuSearchMO(archiveSet, archSize, control, problem);
-            printSolutions(archiveSet, control.getOutputStream());
         }
+        control.endTry(archiveSet);
         // remember to delete the population
         for (int i = 0; i < popSize; i++) {
             delete popu[i];
