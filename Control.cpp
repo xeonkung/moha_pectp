@@ -24,7 +24,8 @@ Control::Control(int argc, char** argv) {
             {"pop", required_argument, 0, 307},
             {"pm", required_argument, 0, 308},
             {"pc", required_argument, 0, 309},
-            {"tsmax", required_argument, 0, 310}
+            {"tsmax", required_argument, 0, 310},
+            {"LS1E", no_argument, 0, 311}
         };
         c = getopt_long(argc, argv, "hi:o:m:n:g:s:t:a:", long_option, &opt_index);
         if (c == -1) break;
@@ -42,6 +43,7 @@ Control::Control(int argc, char** argv) {
                 cout << " -t, --time \t Set limit time" << endl;
                 cout << " --time2 \t Set limit time 2 for hybrid" << endl;
                 cout << " --LS1 \t\t Enable LS1" << endl;
+                cout << " --LS1E \t\t Enable LS1E" << endl;
                 cout << " --LS2 \t\t Enable LS2" << endl;
                 cout << " --alfa \t Set alfa for ts" << endl;
                 cout << " --pts1 \t N1 Prob. for ts" << endl;
@@ -81,6 +83,10 @@ Control::Control(int argc, char** argv) {
                 cout << "Enable: LS1" << endl;
                 flag["LS1"] = true;
                 break;
+            case 311:
+                cout << "Enable: LS1E" << endl;
+                flag["LS1E"] = true;
+                break;
             case 302:
                 cout << "Enable: LS2" << endl;
                 flag["LS2"] = true;
@@ -108,7 +114,7 @@ Control::Control(int argc, char** argv) {
                 break;
             case 310:
                 parameters["tsmax"] = optarg;
-                break;
+                break;            
         }
     }
 

@@ -681,8 +681,8 @@ void MOGA(Control &control) {
         for (int i = 0; i < popSize; i++) {
             popu.push_back(new Solution(problem, rnd));
             popu[i]->RandomInitialSolution();
-            if (control.flag["LS1"])
-                popu[i]->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
+            if (control.flag["LS1"] || control.flag["LS1E"])
+                popu[i]->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3(), control.flag["LS1E"]);
             if (control.flag["LS2"])
                 popu[i]->LS2(control.getMaxSteps(), control.getTimeLimit());
             popu[i]->computePenalty();
@@ -762,8 +762,8 @@ void GA(Control &control) {
         for (int i = 0; i < popSize; i++) {
             pop.push_back(new Solution(problem, rnd));
             pop[i]->RandomInitialSolution();
-            if (control.flag["LS1"])
-                pop[i]->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
+            if (control.flag["LS1"] || control.flag["LS1E"]);
+                pop[i]->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3(), control.flag["LS1E"]);
             if (control.flag["LS2"])
                 pop[i]->LS2(control.getMaxSteps(), control.getTimeLimit());
             pop[i]->computePenalty();
@@ -791,7 +791,7 @@ void GA(Control &control) {
 
             //apply local search to offspring
             if (control.flag["LS1"])
-                child->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3());
+                child->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3(), true);
             if (control.flag["LS2"])
                 child->LS2(control.getMaxSteps(), control.getTimeLimit());
             //tabu

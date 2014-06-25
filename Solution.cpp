@@ -1,5 +1,4 @@
 #include "Solution.h"
-
 Solution::Solution(Problem* pd, Random* rnd) {
 
     data = pd;
@@ -451,18 +450,33 @@ void Solution::randomMove() {
     }
 }
 
-void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double prob2, double prob3) {
+void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double prob2, double prob3, bool evSort) {
     // perform local search with given time limit and probabilities for each type of move
     timer.resetTime(); // reset time counter for the local search
 
     int eventList[data->n_of_events]; // keep a list of events to go through
     for (int i = 0; i < data->n_of_events; i++)
         eventList[i] = i;
-    for (int i = 0; i < data->n_of_events; i++) { // scramble the list of events to obtain a random order
-        int j = (int) (rg->next() * data->n_of_events);
-        int h = eventList[i];
-        eventList[i] = eventList[j];
-        eventList[j] = h;
+    computeFeasibility();
+    if (evSort) {
+        CompareEvent ce(this);
+        sort(eventList, eventList + data->n_of_events, ce);
+//        cout << "Print evlist\n";
+//        for (int i = 0; i < data->n_of_events; i++) {
+//            if (feasible) {
+//                cout << "eid:" << eventList[i] << "\t" << eventScv(eventList[i]) << "\n";
+//            } else {
+//                cout << "eid:" << eventList[i] << "\t" << eventHcv(eventList[i]) * 1000000<< "\n";
+//            }
+//        }
+//        cout << "END //\n";
+    } else {
+        for (int i = 0; i < data->n_of_events; i++) { // scramble the list of events to obtain a random order
+            int j = (int) (rg->next() * data->n_of_events);
+            int h = eventList[i];
+            eventList[i] = eventList[j];
+            eventList[j] = h;
+        }
     }
     /*cout <<"event list" <<endl;
     for(int i = 0 ; i< data->n_of_events; i++)
@@ -474,7 +488,6 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
     int evCount = 0; // counter of events considered
     int stepCount = 0; // set step counter to zero
     int foundbetter = false;
-    computeFeasibility();
     if (!feasible) { // if the timetable is not feasible try to solve hcv
         for (int i = 0; evCount < data->n_of_events; i = (i + 1) % data->n_of_events) {
             if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)
@@ -915,8 +928,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
     int eventList[data->n_of_events]; // keep a list of events to go through
     int * tabuList = new int [data->n_of_events]; // tabu list of events
 
-    for (int i = 0; i < data->n_of_events; i++)
- {
+    for (int i = 0; i < data->n_of_events; i++) {
         tabuList[i] = -(int) (alfa * (double) data->n_of_events); //initialize tabu list
         eventList[i] = i;
     }
@@ -1155,81 +1167,102 @@ void Solution::setTabu(move m, int *tabuList, int iterCount) {
 }
 
 void Solution::LS2(int maxSteps, double LS_limit, double prob1) {
-    timer.resetTime();
-    // occupied size 20%
-    double occ_size = 0.2;
-    int step = 0;
-    vector<int> occupied, occupiedNew;
-    map<int, long> timeslot_penalty;
-    for (map<int, vector<int> >::iterator i = timeslot_events.begin(); i != timeslot_events.end(); i++) {
-        if (i->second.size() != 0) {
-            occupied.push_back(i->first);
-        }
-    }
-    occ_size = occ_size * occupied.size();
 
-    occupied = suffle(occupied);
-    for (int i = 0; i < (int) occ_size; i++) {
-        occupiedNew.push_back(occupied[i]);
-    }
-    // now we get x % of occupied time slot
-    for (vector<int>::iterator i = occupiedNew.begin(); i != occupiedNew.end(); i++) {
-        long sum = 0;
-        for (vector<int>::iterator j = timeslot_events[*i].begin(); j != timeslot_events[*i].end(); j++) {
-            sum += 1000000 * eventHcv(*j) + eventScv(*j);
-        }
-        timeslot_penalty[*i] = sum;
-    }
-    int wt = -1;
-    long bigPenalty = 0;
-    for (map<int, long>::iterator i = timeslot_penalty.begin(); i != timeslot_penalty.end(); i++) {
-        if (i->second > bigPenalty) {
-            wt = i->first;
-            bigPenalty = i->second;
-        }
-    }
-    // now we have wt
-    //vector<int> eventList = suffle(timeslot_events[wt]);  
-
-    map<int, int> ev_timeslot;
-    Solution * neiborSolution = new Solution(data, rg);
-    while (step < maxSteps) {
-        int currHcv = 0, currScv = 0;
-        int neiborHcv = 0, neiborScv = 0;
-        bool foundBetter = false;
-
-        if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit) break;
-        neiborSolution->copy(this);
-        for (vector<int>::iterator i = timeslot_events[wt].begin(); i != timeslot_events[wt].end(); i++) {
-            step++;
-            ev_timeslot[*i] = occupiedNew[(int) (rg->next() * occupiedNew.size())];
-            neiborSolution->Move1(*i, ev_timeslot[*i]);
-            neiborHcv = neiborSolution->eventAffectedHcv(*i) + neiborSolution->affectedRoomInTimeslotHcv(ev_timeslot[*i]);
-            currHcv = eventHcv(*i) + affectedRoomInTimeslotHcv(wt);
-            foundBetter = true;
-            if (neiborHcv == 0) {
-                neiborScv = neiborSolution->eventScv(*i) + singleClassesScv(*i);
-                currScv = eventScv(*i) + neiborSolution->singleClassesScv(*i);
-                if (neiborScv > currScv) {
-                    foundBetter = false;
-                    break;
-                }
-            } else if (neiborHcv > currHcv) {
-                foundBetter = false;
-                break;
+    computeFeasibility();
+    if (feasible && scv != 0) {
+        timer.resetTime();
+        int lastTimeList[5];
+        vector<int> evList;
+        for (int d = 0; d < 5; d++) {
+            lastTimeList[d] = (9 * d) + 8;
+            for (int k = 0; k < (int) timeslot_events[lastTimeList[d]].size(); k++) {
+                evList.push_back(timeslot_events[lastTimeList[d]][k]);
             }
         }
-        if (foundBetter) {
-            copy(neiborSolution);
-        } else {
-            // nothing
-            break;
+        evList = shuffle(evList);
+        // shuffle
+        for (int i = 0; i < 5; i++) { // scramble the list of events to obtain a random order
+            int j = (int) (rg->next() * 5);
+            int h = lastTimeList[i];
+            lastTimeList[i] = lastTimeList[j];
+            lastTimeList[j] = h;
         }
+        int stepCount = 0; // set step counter to zero
+        bool foundbetter = false;
+        int nbh_hcv, nbh_scv;
+        for (int i = 0; i < (int) evList.size(); i++) {
+            if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)break;
+            int t_start = (int) (rg->next() * 45);
+            int currScv = eventScv(evList[i]);
+            for (int h = 0, t = t_start; h < 45; t = ++t % 45, h++) {
+                if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)break;
+                if (t % 9 == 8) continue;
+                if (rg->next() < prob1) {
+                    stepCount++;
+                    Solution *nbh_sol = new Solution(data, rg);
+                    nbh_sol->copy(this);
+                    nbh_sol->Move1(evList[i], t);
+                    nbh_hcv = nbh_sol->eventAffectedHcv(evList[i]);
+                    if (nbh_hcv == 0) {
+                        nbh_scv = nbh_sol->eventScv(evList[i])
+                                + singleClassesScv(evList[i])
+                                - nbh_sol->singleClassesScv(evList[i]);
+                        if (nbh_scv < currScv) {
+                            copy(nbh_sol);
+                            delete nbh_sol;
+                            foundbetter = true;
+                            break; // break for h
+                        }
+                    }
+                    delete nbh_sol;
+                }
+            }
+            if (foundbetter) {
+                foundbetter = false;
+                continue;
+            }
+        }
+        //        for (int d = 0; d < 5; d++) {
+        //            if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)break;
+        //            for (int k = 0; k < (int) timeslot_events[lastTimeList[d]].size(); k++) {
+        //                int ei = timeslot_events[lastTimeList[d]][k];
+        //                if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)break;
+        //                int t_start = (int) (rg->next() * 45);
+        //                int currScv = eventScv(ei);
+        //                for (int h = 0, t = t_start; h < 45; t = ++t % 45, h++) {
+        //                    if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)break;
+        //                    if (t % 9 == 8) continue;
+        //                    //cout << "LS2 " << t << "/e" << *ei << endl;
+        //                    if (rg->next() < prob1) {
+        //                        stepCount++;
+        //                        Solution *nbh_sol = new Solution(data, rg);
+        //                        nbh_sol->copy(this);
+        //                        nbh_sol->Move1(ei, t);
+        //                        nbh_hcv = nbh_sol->eventAffectedHcv(ei);
+        //                        if (nbh_hcv == 0) {
+        //                            nbh_scv = nbh_sol->eventScv(ei)
+        //                                    + singleClassesScv(ei)
+        //                                    - nbh_sol->singleClassesScv(ei);
+        //                            if (nbh_scv < currScv) {
+        //                                copy(nbh_sol);
+        //                                delete nbh_sol;
+        //                                foundbetter = true;
+        //                                break; // break for h
+        //                            }
+        //                        }
+        //                        delete nbh_sol;
+        //                    }
+        //                }
+        //                if (foundbetter) {
+        //                    foundbetter = false;
+        //                    break;
+        //                }
+        //            }
+        //        }
     }
-    delete neiborSolution;
 }
 
-vector<int> Solution::suffle(vector<int> source) {
+vector<int> Solution::shuffle(vector<int> source) {
     vector<int> a;
     int j;
     for (vector<int>::iterator i = source.begin(); i != source.end(); i++) {
