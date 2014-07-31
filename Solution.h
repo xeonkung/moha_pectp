@@ -53,7 +53,7 @@ public:
     bool equ(Solution*);
     Solution(Problem* pd, Random* rnd); //constructor with pointers to the problem data and to the random object 
 
-    void RandomInitialSolution(bool); // produce a random initial solution
+    void RandomInitialSolution(bool forty = false); // produce a random initial solution
     bool computeFeasibility(); // check feasibilityXFProblem.cpp
     int computeScv(); // compute soft constraint violations
     void copy(Solution *orig); // copy a pointer to a Solution into this one

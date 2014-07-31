@@ -33,7 +33,7 @@ void Solution::copy(Solution *orig) {
     penalty = orig->penalty;
 }
 
-void Solution::RandomInitialSolution(bool forty = false) {
+void Solution::RandomInitialSolution(bool forty) {
     // assign a random timeslot to each event
     if (forty) {
         for (int i = 0; i < data->n_of_events; i++) {
