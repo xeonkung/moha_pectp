@@ -4,12 +4,15 @@
     <df root="." name="0">
       <in>Control.cpp</in>
       <in>Control.h</in>
+      <in>Distance.cpp</in>
       <in>Distance.h</in>
+      <in>ObjectiveCmp.cpp</in>
       <in>ObjectiveCmp.h</in>
       <in>Problem.cpp</in>
       <in>Problem.h</in>
       <in>Random.cc</in>
       <in>Random.h</in>
+      <in>Ranking.cpp</in>
       <in>Ranking.h</in>
       <in>Solution.cpp</in>
       <in>Solution.h</in>
@@ -20,24 +23,13 @@
       <in>util.cpp</in>
       <in>util.h</in>
     </df>
-    <df root="." name="1">
-      <in>Distance.cpp</in>
-      <in>ObjectiveCmp.cpp</in>
-      <in>Ranking.cpp</in>
-    </df>
-    <df root="." name="2">
-    </df>
-    <df root="." name="3">
-    </df>
-    <df root="." name="4">
-    </df>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Default" type="0">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <platform>4</platform>
+        <platform>3</platform>
       </toolsSet>
       <compile>
         <compiledirpicklist>

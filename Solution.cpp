@@ -1,4 +1,5 @@
 #include "Solution.h"
+
 Solution::Solution(Problem* pd, Random* rnd) {
 
     data = pd;
@@ -32,12 +33,21 @@ void Solution::copy(Solution *orig) {
     penalty = orig->penalty;
 }
 
-void Solution::RandomInitialSolution() {
+void Solution::RandomInitialSolution(bool forty = false) {
     // assign a random timeslot to each event
-    for (int i = 0; i < data->n_of_events; i++) {
-        int t = (int) (rg->next() * 45);
-        sln[i].first = t;
-        timeslot_events[t].push_back(i);
+    if (forty) {
+        for (int i = 0; i < data->n_of_events; i++) {
+            int t = (int) (rg->next() * 40);
+            t = ((t / 8) * 9 ) + (t % 8);
+            sln[i].first = t;
+            timeslot_events[t].push_back(i);
+        }
+    } else {
+        for (int i = 0; i < data->n_of_events; i++) {
+            int t = (int) (rg->next() * 45);
+            sln[i].first = t;
+            timeslot_events[t].push_back(i);
+        }
     }
     // and assign rooms to events in each non-empty timeslot
     for (int j = 0; j < 45; j++) {
@@ -461,15 +471,15 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
     if (evSort) {
         CompareEvent ce(this);
         sort(eventList, eventList + data->n_of_events, ce);
-//        cout << "Print evlist\n";
-//        for (int i = 0; i < data->n_of_events; i++) {
-//            if (feasible) {
-//                cout << "eid:" << eventList[i] << "\t" << eventScv(eventList[i]) << "\n";
-//            } else {
-//                cout << "eid:" << eventList[i] << "\t" << eventHcv(eventList[i]) * 1000000<< "\n";
-//            }
-//        }
-//        cout << "END //\n";
+        //        cout << "Print evlist\n";
+        //        for (int i = 0; i < data->n_of_events; i++) {
+        //            if (feasible) {
+        //                cout << "eid:" << eventList[i] << "\t" << eventScv(eventList[i]) << "\n";
+        //            } else {
+        //                cout << "eid:" << eventList[i] << "\t" << eventHcv(eventList[i]) * 1000000<< "\n";
+        //            }
+        //        }
+        //        cout << "END //\n";
     } else {
         for (int i = 0; i < data->n_of_events; i++) { // scramble the list of events to obtain a random order
             int j = (int) (rg->next() * data->n_of_events);

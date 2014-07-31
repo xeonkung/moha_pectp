@@ -680,7 +680,7 @@ void MOGA(Control &control) {
         // Random generate solution
         for (int i = 0; i < popSize; i++) {
             popu.push_back(new Solution(problem, rnd));
-            popu[i]->RandomInitialSolution();
+            popu[i]->RandomInitialSolution(true);
             if (control.flag["LS1"] || control.flag["LS1E"])
                 popu[i]->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3(), control.flag["LS1E"]);
             if (control.flag["LS2"])
