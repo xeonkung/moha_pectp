@@ -19,7 +19,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-
+/**
+ * Allocate memory for matrix type Double size m x n
+ * @param nrows is m
+ * @param ncol is n
+ * @return pointer to Matrix
+ */
 double ** DoubleMatrixAlloc(int nrows, int ncol)
 {
   double **matrix;
@@ -35,7 +40,12 @@ double ** DoubleMatrixAlloc(int nrows, int ncol)
 
   return matrix;
 }
-
+/**
+ * Allocate memory for matrix type Integer size m x n
+ * @param nrows is m
+ * @param ncol is n
+ * @return pointer to Matrix
+ */
 int ** IntMatrixAlloc(int nrows, int ncol)
 {
   int **matrix;
@@ -51,7 +61,12 @@ int ** IntMatrixAlloc(int nrows, int ncol)
 
   return matrix;
 }
-
+/**
+ * Allocate memory for matrix type Long-Integer size m x n
+ * @param nrows is m
+ * @param ncol is n
+ * @return pointer to Matrix
+ */
 long int ** LongIntMatrixAlloc(int nrows, int ncol)
 {
   long int **matrix;
@@ -67,7 +82,12 @@ long int ** LongIntMatrixAlloc(int nrows, int ncol)
 
   return matrix;
 }
-
+/**
+ * Binary Search in vector of int
+ * @param vect is Vector of int
+ * @param n is searching integer
+ * @return index in vect // -1 when not found
+ */
 int binarySearch(vector<int> vect, int n)
 {
   int l, r;
@@ -85,7 +105,11 @@ int binarySearch(vector<int> vect, int n)
     }
   return -1;
 }
-
+/**
+ * Find square root of int
+ * @param n is integer
+ * @return square root of n
+ */
 int sqrt(int n)
 {
   int s,i;

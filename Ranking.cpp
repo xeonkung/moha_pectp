@@ -6,7 +6,10 @@
  */
 
 #include "Ranking.h"
-
+/**
+ * Ranking constructor
+ * @param p is vector of solution (population)
+ */
 Ranking::Ranking(VectorSolution p) {
     pop = p;
     const int popSize = (int)pop.size();
@@ -15,10 +18,11 @@ Ranking::Ranking(VectorSolution p) {
     vector<int>* iDominate = new vector<int>[popSize];
     vector<int>* front = new vector<int>[popSize + 1];
     int flagDominate;
-    
+    // set default value
     for(int p = 0; p < popSize; p++) {
         dominateMe[p] = 0;
     }
+    // find dominated solution
     for(int p = 0; p < popSize - 1; p++) {
         for(int q = p + 1; q < popSize; q++) {
             flagDominate = compareOverall(pop[p], pop[q]);
@@ -43,12 +47,15 @@ Ranking::Ranking(VectorSolution p) {
     }
     int i = 0;
     vector<int>::iterator it1, it2;
+    // assign front for each solution
     while (front[i].size() != 0) {
         i++;
         it1 = front[i-1].begin();
         for (it1 = front[i-1].begin(); it1 != front[i-1].end(); ++it1) {
             for (it2 = iDominate[*it1].begin(); it2 != iDominate[*it1].end(); ++it2){
+                // remove last dominate by nearby top front
                 dominateMe[*it2]--;
+                // if non-dominate push to front[i]
                 if(dominateMe[*it2] == 0){
                     front[i].push_back(*it2);
                     pop[*it2]->rank = i;
@@ -65,14 +72,18 @@ Ranking::Ranking(VectorSolution p) {
     delete[] iDominate;
     delete[] front;
 }
-
-Ranking::Ranking(const Ranking& orig) {
-}
-
+/**
+ * Ranking de-constructor
+ */
 Ranking::~Ranking() {
     delete[] Front;
 }
-
+/**
+ * Compare dominate of 2 solution
+ * @param a is pointer to solution
+ * @param b is pointer to solution
+ * @return result 
+ */
 int Ranking::compareDominateSolution(Solution* a, Solution* b){
     int val1, val2, dominate1 = 0, dominate2 = 0;
     for(int i = 0; i < Solution::obj_N; i++) {
@@ -92,7 +103,12 @@ int Ranking::compareDominateSolution(Solution* a, Solution* b){
     }
     return 1;
 }
-
+/**
+ * Compare hcv of 2 solution
+ * @param a is pointer to solution
+ * @param b is pointer to solution
+ * @return result
+ */
 int Ranking::compareOverall(Solution* a, Solution* b){
     if(a->hcv < b->hcv){
         return -1;

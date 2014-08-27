@@ -1,5 +1,8 @@
 #include "Problem.h"
-
+/**
+ * Problem constructor
+ * @param ifs is input stream (opened file)
+ */
 Problem::Problem( istream& ifs ) {
 
   // read in a problem instance from file with extension file format .tim

@@ -1,7 +1,11 @@
 #include "Control.h"
 #include <limits.h>
 #include <getopt.h>
-
+/**
+ * Control constructor
+ * @param argc is number of argument
+ * @param argv is pointer to argument array
+ */
 Control::Control(int argc, char** argv) {
 
     //edit use getopt by xeonkung
@@ -304,7 +308,11 @@ Control::Control(int argc, char** argv) {
 
 Control::~Control() {
 }
-
+/**
+ * Checking parameter is Exists
+ * @param paramName is parameter name
+ * @return boolean
+ */
 bool
 Control::parameterExists(string paramName) {
     for (map< string, string >::iterator i = parameters.begin(); i != parameters.end(); i++) {
@@ -313,7 +321,11 @@ Control::parameterExists(string paramName) {
     }
     return false;
 }
-
+/**
+ * Get int value of parameter
+ * @param paramName is parameter name
+ * @return int value
+ */
 int
 Control::getIntParameter(string paramName) {
     if (parameterExists(paramName))
@@ -322,7 +334,11 @@ Control::getIntParameter(string paramName) {
         return 0;
     }
 }
-
+/**
+ * Get double value of parameter
+ * @param paramName is parameter name
+ * @return double value
+ */
 double
 Control::getDoubleParameter(string paramName) {
     if (parameterExists(paramName))
@@ -331,7 +347,11 @@ Control::getDoubleParameter(string paramName) {
         return 0;
     }
 }
-
+/**
+ * Get string value of parameter
+ * @param paramName is parameter name
+ * @return string value
+ */
 string
 Control::getStringParameter(string paramName) {
     if (parameterExists(paramName))
@@ -340,17 +360,24 @@ Control::getStringParameter(string paramName) {
         return 0;
     }
 }
-
+/**
+ * Reset timer
+ */
 void
 Control::resetTime() {
     timer.resetTime();
 }
-
+/**
+ * Get elapsed time
+ * @return double time
+ */
 double
 Control::getTime() {
     return timer.elapsedTime(Timer::VIRTUAL);
 }
-
+/**
+ * Set a start point
+ */
 void
 Control::beginTry() {
     srand(seed++);
@@ -361,7 +388,10 @@ Control::beginTry() {
     bestEvaluation = INT_MAX;
     gen = 0;
 }
-
+/**
+ * Set a end point & show result
+ * @param bestSolution is pointer to solution
+ */
 void
 Control::endTry(Solution *bestSolution) {
     (*os) << "begin solution " << nrTry << endl;
@@ -387,7 +417,10 @@ Control::endTry(Solution *bestSolution) {
       (*os) << endl;
       }*/
 }
-
+/**
+ * Set & show current best solution
+ * @param currentSolution
+ */
 void
 Control::setCurrentCost(Solution *currentSolution) {
     //if( timeLeft() ) {
@@ -418,7 +451,11 @@ Control::setCurrentCost(Solution *currentSolution) {
     }
     //}
 }
-
+/**
+ * 
+ * Set a end point & show result
+ * @param vs is vector of solution
+ */
 void Control::endTry(VectorSolution vs) {
     (*os) << "begin solution " << nrTry << endl;
     (*os) << "total time: " << getTime() << " gen: " << gen << endl;

@@ -16,7 +16,9 @@ Timer::Timer(void) {
   gettimeofday( &tp, 0 );
   real_time =    (double) tp.tv_sec + (double) tp.tv_usec * 1.0E-6;
 }
-
+/**
+ * Reset a timer
+ */
 void
 Timer::resetTime() {
   getrusage( RUSAGE_SELF, &res );

@@ -1,14 +1,18 @@
 #include "Solution.h"
-
+/**
+ * Solution constructor
+ * @param pd is pointer to Problem instamce
+ * @param rnd is pointer to Randominstance
+ */
 Solution::Solution(Problem* pd, Random* rnd) {
-
     data = pd;
     rg = rnd;
     slnInit();
 }
-
+/**
+ * Initial Solution with default value
+ */
 void Solution::slnInit() {
-
     pair<int, int> initPair;
     initPair.first = -1;
     initPair.second = -1;
@@ -17,7 +21,10 @@ void Solution::slnInit() {
     }
 
 }
-
+/**
+ * Copy data found another Solution
+ * @param orig is pointer to another Solution
+ */
 void Solution::copy(Solution *orig) {
     sln = orig->sln;
     data = orig->data;
@@ -32,9 +39,12 @@ void Solution::copy(Solution *orig) {
     hcv = orig->hcv;
     penalty = orig->penalty;
 }
-
+/**
+ * Initial Solution with random value
+ * @param forty is 40 time-slot setup
+ */
 void Solution::RandomInitialSolution(bool forty) {
-    // assign a random timeslot to each event
+    // assign a random time-slot to each event
     if (forty) {
         for (int i = 0; i < data->n_of_events; i++) {
             int t = (int) (rg->next() * 40);
@@ -55,7 +65,10 @@ void Solution::RandomInitialSolution(bool forty) {
             assignRooms(j);
     }
 }
-
+/**
+ * Compute a feasibility of solution
+ * @return Feasibility
+ */
 bool Solution::computeFeasibility() {
     for (int i = 0; i < data->n_of_events; i++) {
         for (int j = i + 1; j < data->n_of_events; j++) {
@@ -78,7 +91,10 @@ bool Solution::computeFeasibility() {
     hcv = 0;
     return true;
 }
-
+/**
+ * Compute a Soft constrain value of solution
+ * @return SCV value
+ */
 int Solution::computeScv() {
     int consecutiveClasses, classesDay;
     bool attendsTimeslot;
@@ -138,7 +154,10 @@ int Solution::computeScv() {
     }
     return scv;
 }
-
+/**
+ * Compute a Hard constrain value of solution
+ * @return HCV
+ */
 int Solution::computeHcv() {
 
     hcv = 0; // set hard constraint violations to zero to start with
@@ -158,7 +177,10 @@ int Solution::computeHcv() {
 
     return hcv;
 }
-
+/**
+ * Compute a Penalty value of solution
+ * @return penalty value
+ */
 int Solution::computePenalty() {
     if (computeFeasibility())
         penalty = computeScv();
@@ -166,9 +188,11 @@ int Solution::computePenalty() {
         penalty = 1000000 + computeHcv();
     return penalty;
 }
-
-//compute hard constraint violations involving event e
-
+/**
+ * compute hard constraint violations involving event e
+ * @param e is index of event in solution
+ * @return event's HCV
+ */
 int Solution::eventHcv(int e) {
     int eHcv = 0; // set to zero hard constraint violations for event e
     int t = sln[e].first; // note the timeslot in which event e is
@@ -187,9 +211,11 @@ int Solution::eventHcv(int e) {
     // the suitable room hard constraint is taken care of by the assignroom routine
     return eHcv;
 }
-
-//compute hard constraint violations that can be affected by moving event e from its timeslot
-
+/**
+ * compute hard constraint violations that can be affected by moving event e from its timeslot
+ * @param e is index of event in solution
+ * @return event's HCV
+ */
 int Solution::eventAffectedHcv(int e) {
     int aHcv = 0; // set to zero the affected hard constraint violations for event e
     int t = sln[e].first; // t timeslot where event e is
@@ -229,8 +255,11 @@ int Solution::eventAffectedHcv(int e) {
 //  return roomHcv;
 //}
 
-// evaluate all the "only one class can be in each room at any timeslot" hcv this time for all the events in timeslot t
-
+/**
+ * evaluate all the "only one class can be in each room at any timeslot" hcv this time for all the events in timeslot t
+ * @param t is time-slot
+ * @return event's HCV
+ */
 int Solution::affectedRoomInTimeslotHcv(int t) {
     int roomHcv = 0;
     for (int i = 0; i < (int) timeslot_events[t].size(); i++) {
@@ -241,9 +270,11 @@ int Solution::affectedRoomInTimeslotHcv(int t) {
     }
     return roomHcv;
 }
-
-// evaluate the number of soft constraint violation involving event e
-
+/**
+ * evaluate the number of soft constraint violation involving event e
+ * @param e is index of event in solution
+ * @return event's SCV
+ */
 int Solution::eventScv(int e) {
     int eScv = 0;
     int t = sln[e].first;
@@ -320,11 +351,13 @@ int Solution::eventScv(int e) {
     return eScv;
 
 }
-
-// compute the number of single classes that event e "solves" in its timeslot
-// obviously when the event is taken out of its timeslot this is also the number 
-// of single classes introduced by the move in the day left by the event
-
+/**
+ * compute the number of single classes that event e "solves" in its timeslot
+ * obviously when the event is taken out of its timeslot this is also
+ * the number of single classes introduced by the move in the day left by the event
+ * @param e is index of event in solution
+ * @return event's SCV
+ */
 int Solution::singleClassesScv(int e) {
     int t = sln[e].first;
     int classes, singleClasses = 0;
@@ -351,9 +384,13 @@ int Solution::singleClassesScv(int e) {
     }
     return singleClasses;
 }
-
+/**
+ * Change solution time-slot
+ * @param e is index of event in solution
+ * @param t is time-slot
+ */
 void Solution::Move1(int e, int t) {
-    //move event e to timeslot t
+    //move event e to time-slot t
     int tslot = sln[e].first;
     sln[e].first = t;
     vector<int>::iterator i;
@@ -371,7 +408,11 @@ void Solution::Move1(int e, int t) {
     if ((int) timeslot_events[tslot].size() > 0)
         assignRooms(tslot);
 }
-
+/**
+ * Swap 2 solution time-slot
+ * @param e1 is index of event in solution
+ * @param e2 is index of event in solution
+ */
 void Solution::Move2(int e1, int e2) {
     //swap timeslots between event e1 and event e2
     int t = sln[e1].first;
@@ -397,7 +438,12 @@ void Solution::Move2(int e1, int e2) {
     assignRooms(sln[e1].first);
     assignRooms(sln[e2].first);
 }
-
+/**
+ * Swap 3 solution time-slot
+ * @param e1 is index of event in solution
+ * @param e2 is index of event in solution
+ * @param e3 is index of event in solution
+ */
 void Solution::Move3(int e1, int e2, int e3) {
     // permute event e1, e2, and e3 in a 3-cycle
     int t = sln[e1].first;
@@ -432,7 +478,9 @@ void Solution::Move3(int e1, int e2, int e3) {
     assignRooms(sln[e2].first);
     assignRooms(sln[e3].first);
 }
-
+/**
+ * Change solution by random move 1, 2, or 3
+ */
 void Solution::randomMove() {
     //pick at random a type of move: 1, 2, or 3
     int moveType, e1;
@@ -459,7 +507,15 @@ void Solution::randomMove() {
         Move3(e1, e2, e3);
     }
 }
-
+/**
+ * Local-search (LS1)
+ * @param maxSteps is maximum step to run local-search
+ * @param LS_limit is maximum time to run local-search
+ * @param prob1 is probability to use move1
+ * @param prob2 is probability to use move2
+ * @param prob3 is probability to use move3
+ * @param evSort is Flag to sort event penalty before search
+ */
 void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double prob2, double prob3, bool evSort) {
     // perform local search with given time limit and probabilities for each type of move
     timer.resetTime(); // reset time counter for the local search
@@ -469,19 +525,12 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
         eventList[i] = i;
     computeFeasibility();
     if (evSort) {
+        // sort event penalty before search
         CompareEvent ce(this);
         sort(eventList, eventList + data->n_of_events, ce);
-        //        cout << "Print evlist\n";
-        //        for (int i = 0; i < data->n_of_events; i++) {
-        //            if (feasible) {
-        //                cout << "eid:" << eventList[i] << "\t" << eventScv(eventList[i]) << "\n";
-        //            } else {
-        //                cout << "eid:" << eventList[i] << "\t" << eventHcv(eventList[i]) * 1000000<< "\n";
-        //            }
-        //        }
-        //        cout << "END //\n";
     } else {
-        for (int i = 0; i < data->n_of_events; i++) { // scramble the list of events to obtain a random order
+        // scramble the list of events to obtain a random order
+        for (int i = 0; i < data->n_of_events; i++) { 
             int j = (int) (rg->next() * data->n_of_events);
             int h = eventList[i];
             eventList[i] = eventList[j];
@@ -498,7 +547,8 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
     int evCount = 0; // counter of events considered
     int stepCount = 0; // set step counter to zero
     int foundbetter = false;
-    if (!feasible) { // if the timetable is not feasible try to solve hcv
+    // if the timetable is not feasible try to solve hcv
+    if (!feasible) {
         for (int i = 0; evCount < data->n_of_events; i = (i + 1) % data->n_of_events) {
             if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)
                 break;
@@ -509,20 +559,25 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
             }
             // otherwise if the event in consideration caused hcv
             int currentAffectedHcv;
-            int t_start = (int) (rg->next()*45); // try moves of type 1
-            int t_orig = sln[eventList[i]].first;
-            for (int h = 0, t = t_start; h < 45; t = (t + 1) % 45, h++) {
+            // Try moves of type 1
+            int t_start = (int) (rg->next()*40); 
+            int t_orig = sln[eventList[i]].first;            
+            for (int h = 0, t = t_start; h < 40; t = (t + 1) % 40, h++) {
+                t = (t / 8) * 9 + (t % 8);
                 if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)
                     break;
                 if (rg->next() < prob1) { // with given probability
                     stepCount++;
+                    // create neighbourhood by move1
                     Solution *neighbourSolution = new Solution(data, rg);
                     neighbourSolution->copy(this);
-                    //cout<< "event " << eventList[i] << " timeslot " << t << endl;
+                    //cout<< "event " << eventList[i] << " timeslot " << t << endl;                    
                     neighbourSolution->Move1(eventList[i], t);
+                    // find neighbourhood's HCV
                     neighbourAffectedHcv = neighbourSolution->eventAffectedHcv(eventList[i]) + neighbourSolution->affectedRoomInTimeslotHcv(t_orig);
                     currentAffectedHcv = eventAffectedHcv(eventList[i]) + affectedRoomInTimeslotHcv(t);
                     if (neighbourAffectedHcv < currentAffectedHcv) {
+                        // if neighbourhood get hcv better than current
                         copy(neighbourSolution);
                         delete neighbourSolution;
                         evCount = 0;
@@ -537,18 +592,22 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
                 continue;
             }
             if (prob2 != 0) {
-                for (int j = (i + 1) % data->n_of_events; j != i; j = (j + 1) % data->n_of_events) { // try moves of type 2
+                // Try moves of type 2
+                for (int j = (i + 1) % data->n_of_events; j != i; j = (j + 1) % data->n_of_events) { 
                     if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)
                         break;
                     if (rg->next() < prob2) { // with given probability
                         stepCount++;
+                        // create neighbourhood by move2
                         Solution *neighbourSolution = new Solution(data, rg);
                         neighbourSolution->copy(this);
                         neighbourSolution->Move2(eventList[i], eventList[j]);
                         //cout<< "event " << eventList[i] << " second event " << eventList[j] << endl;
+                        // find neighbourhood's HCV
                         neighbourAffectedHcv = neighbourSolution->eventAffectedHcv(eventList[i]) + neighbourSolution->eventAffectedHcv(eventList[j]);
                         currentAffectedHcv = eventAffectedHcv(eventList[i]) + eventAffectedHcv(eventList[j]);
                         if (neighbourAffectedHcv < currentAffectedHcv) {
+                            // if neighbourhood get hcv better than current
                             copy(neighbourSolution);
                             delete neighbourSolution;
                             evCount = 0;
@@ -564,22 +623,27 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
                 }
             }
             if (prob3 != 0) {
-                for (int j = (i + 1) % data->n_of_events; j != i; j = (j + 1) % data->n_of_events) { // try moves of type 3
+                // Try moves of type 3
+                for (int j = (i + 1) % data->n_of_events; j != i; j = (j + 1) % data->n_of_events) {
                     if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)
                         break;
                     for (int k = (j + 1) % data->n_of_events; k != i; k = (k + 1) % data->n_of_events) {
                         if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)
-                            break;
+                            break;               
+                        // clockwise
                         if (rg->next() < prob3) { // with given probability
                             stepCount++;
                             currentAffectedHcv = eventAffectedHcv(eventList[i]) + eventAffectedHcv(eventList[j]) + eventAffectedHcv(eventList[k]);
+                            // create neighbourhood by move3
                             Solution *neighbourSolution = new Solution(data, rg);
                             neighbourSolution->copy(this);
                             neighbourSolution->Move3(eventList[i], eventList[j], eventList[k]); //try one of the to possible 3-cycle
                             //cout<< "event " << eventList[i] << " second event " << eventList[j] << " third event "<< eventList[k] << endl;
+                            // find neighbourhood's HCV
                             neighbourAffectedHcv = neighbourSolution->eventAffectedHcv(eventList[i]) + neighbourSolution->eventAffectedHcv(eventList[j])
                                     + neighbourSolution->eventAffectedHcv(eventList[k]);
                             if (neighbourAffectedHcv < currentAffectedHcv) {
+                                // if neighbourhood get hcv better than current
                                 copy(neighbourSolution);
                                 delete neighbourSolution;
                                 evCount = 0;
@@ -590,16 +654,20 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
                         }
                         if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)
                             break;
+                        // counterclockwise
                         if (rg->next() < prob3) { // with given probability
                             stepCount++;
                             currentAffectedHcv = eventAffectedHcv(eventList[i]) + eventAffectedHcv(eventList[k]) + eventAffectedHcv(eventList[j]);
+                            // create neighbourhood by move3
                             Solution *neighbourSolution = new Solution(data, rg);
                             neighbourSolution->copy(this);
                             neighbourSolution->Move3(eventList[i], eventList[k], eventList[j]); //try one of the to possible 3-cycle
                             //cout<< "event " << eventList[i] << " second event " << eventList[j] << " third event "<< eventList[k] << endl;
+                            // find neighbourhood's HCV
                             neighbourAffectedHcv = neighbourSolution->eventAffectedHcv(eventList[i]) + neighbourSolution->eventAffectedHcv(eventList[k])
                                     + neighbourSolution->eventAffectedHcv(eventList[j]);
                             if (neighbourAffectedHcv < currentAffectedHcv) {
+                                // if neighbourhood get hcv better than current
                                 copy(neighbourSolution);
                                 delete neighbourSolution;
                                 evCount = 0;
@@ -621,7 +689,8 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
         }
     }
     computeFeasibility();
-    if (feasible) { // if the timetable is feasible
+    if (feasible) { 
+        // if the timetable is feasible
         evCount = 0;
         int neighbourHcv;
         for (int i = 0; evCount < data->n_of_events; i = (i + 1) % data->n_of_events) { //go through the events in the list
@@ -634,23 +703,28 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
                 continue; //go to the next event       
             }
             // otherwise try all the possible moves
-            int t_start = (int) (rg->next()*45); // try moves of type 1
-            for (int h = 0, t = t_start; h < 45; t = (t + 1) % 45, h++) {
+            int t_start = (int) (rg->next()*40); // try moves of type 1
+            for (int h = 0, t = t_start; h < 40; t = (t + 1) % 40, h++) {
+                t = (t / 8) * 9 + (t % 8);
                 if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)
                     break;
                 if (rg->next() < prob1) { // each with given propability
                     stepCount++;
+                    // create neighbourhood by move1
                     Solution *neighbourSolution = new Solution(data, rg);
                     neighbourSolution->copy(this);
                     neighbourSolution->Move1(eventList[i], t);
                     //cout<< "event " << eventList[i] << " timeslot " << t << endl;
+                    // find neighbourhood's HCV
                     neighbourHcv = neighbourSolution->eventAffectedHcv(eventList[i]); //count possible hcv introduced by move
                     if (neighbourHcv == 0) { // consider the move only if no hcv are introduced
+                        // find neighbourhood's SCV
                         neighbourScv = neighbourSolution->eventScv(eventList[i]) // respectively Scv involving event e 
                                 + singleClassesScv(eventList[i]) // + single classes introduced in day of original timeslot
                                 - neighbourSolution->singleClassesScv(eventList[i]); // - single classes "solved" in new day
                         //cout<< "neighbour cost " << neighbourScv<<" " << neighbourHcv<< endl;
                         if (neighbourScv < currentScv) {
+                            // if neighbourhood get scv better than current
                             copy(neighbourSolution);
                             delete neighbourSolution;
                             evCount = 0;
@@ -671,6 +745,7 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
                         break;
                     if (rg->next() < prob2) { // with the given probability
                         stepCount++;
+                        // create neighbourhood by move2
                         Solution *neighbourSolution = new Solution(data, rg);
                         neighbourSolution->copy(this);
                         //cout<< "event " << eventList[i] << " second event " << eventList[j] << endl;
@@ -683,6 +758,7 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
                                     + neighbourSolution->eventScv(eventList[j]) + singleClassesScv(eventList[j]) - neighbourSolution->singleClassesScv(eventList[j]);
                             // cout<< "neighbour cost " << neighbourScv<<" " << neighbourHcv<< endl;
                             if (neighbourScv < currentScv + eventScv(eventList[j])) { // if scv are reduced
+                                // if neighbourhood get scv better than current
                                 copy(neighbourSolution); // do the move
                                 delete neighbourSolution;
                                 evCount = 0;
@@ -705,8 +781,10 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
                     for (int k = (j + 1) % data->n_of_events; k != i; k = (k + 1) % data->n_of_events) {
                         if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)
                             break;
+                        // clockwise
                         if (rg->next() < prob3) { // with given probability try one of the 2 possibles 3-cycles
                             stepCount++;
+                            // create neighbourhood by move3
                             Solution *neighbourSolution = new Solution(data, rg);
                             neighbourSolution->copy(this);
                             neighbourSolution->Move3(eventList[i], eventList[j], eventList[k]);
@@ -721,6 +799,7 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
                                         + neighbourSolution->eventScv(eventList[k]) + singleClassesScv(eventList[k]) - neighbourSolution->singleClassesScv(eventList[k]);
                                 // cout<< "neighbour cost " << neighbourScv<<" " << neighbourHcv<< endl;
                                 if (neighbourScv < currentScv + eventScv(eventList[j]) + eventScv(eventList[k])) {
+                                    // if neighbourhood get scv better than current
                                     copy(neighbourSolution);
                                     delete neighbourSolution;
                                     evCount = 0;
@@ -732,8 +811,10 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
                         }
                         if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)
                             break;
+                        // counterclockwise
                         if (rg->next() < prob3) { // with the same probability try the other possible 3-cycle for the same 3 events
                             stepCount++;
+                            // create neighbourhood by move3
                             Solution *neighbourSolution = new Solution(data, rg);
                             neighbourSolution->copy(this);
                             neighbourSolution->Move3(eventList[i], eventList[k], eventList[j]);
@@ -748,6 +829,7 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
                                         + neighbourSolution->eventScv(eventList[j]) + singleClassesScv(eventList[j]) - neighbourSolution->singleClassesScv(eventList[j]);
                                 // cout<< "neighbour cost " << neighbourScv<<" " << neighbourHcv<< endl;
                                 if (neighbourScv < currentScv + eventScv(eventList[k]) + eventScv(eventList[j])) {
+                                    // if neighbourhood get scv better than current
                                     copy(neighbourSolution);
                                     delete neighbourSolution;
                                     evCount = 0;
@@ -770,9 +852,10 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
         }
     }
 }
-
-// assign rooms to events in timeslot t
-
+/**
+ * assign rooms to events in timeslot t
+ * @param t is time-slot
+ */
 void Solution::assignRooms(int t) {
     val.clear();
     dad.clear();
@@ -833,9 +916,10 @@ void Solution::assignRooms(int t) {
     free(size); // don't forget to free the memory
     free(flow);
 }
-
-// maximum matching algorithm
-
+/**
+ * maximum matching algorithm
+ * @param V is size of Vector
+ */
 void Solution::maxMatching(int V) {
 
     while (networkFlow(V)) {
@@ -849,9 +933,11 @@ void Solution::maxMatching(int V) {
         }
     }
 }
-
-//network flow algorithm
-
+/**
+ * network flow algorithm
+ * @param V is size of Vector
+ * @return 
+ */
 bool Solution::networkFlow(int V) {
     int k, t, min = 0;
     int priority = 0;
@@ -891,7 +977,11 @@ bool Solution::networkFlow(int V) {
     }
     return false;
 }
-
+/**
+ * Crossover operation (GA)
+ * @param parent1 is pointer to solution
+ * @param parent2 is pointer to solution
+ */
 void Solution::crossover(Solution* parent1, Solution* parent2) {
 
     // assign some timeslots from the first parent and some from the second
@@ -910,21 +1000,26 @@ void Solution::crossover(Solution* parent1, Solution* parent2) {
     }
 
 }
-
+/**
+ * Mutate operation (GA)
+ */
 void Solution::mutation() {
     randomMove();
 }
-
+/**
+ * Tabu-search
+ * @param timeLimit is maximum time to run tabu-search
+ * @param a is alfa parameter
+ * @param prob1 is probability to use move1
+ * @param prob2 is probability to use move2
+ */
 void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2) {// perform tabu search with given time limit and probabilities for each type of move
-
     double alfa = a;
     timer.resetTime(); // reset time counter for the local search
     // 	computeHcv();
     // 	computeScv();
     int bestHcv = hcv; //set equal to the hcv of the first found solution
     int bestScv = scv; // if the first found solution is not feasible scv == 99999
-
-
 
     //best found solution
     Solution *bestSolution = new Solution(data, rg);
@@ -942,8 +1037,8 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
         tabuList[i] = -(int) (alfa * (double) data->n_of_events); //initialize tabu list
         eventList[i] = i;
     }
-
-    for (int i = 0; i < data->n_of_events; i++) { // scramble the list of events to obtain a random order
+    // scramble the list of events to obtain a random order
+    for (int i = 0; i < data->n_of_events; i++) { 
         int j = (int) (rg->next() * data->n_of_events);
         int h = eventList[i];
         eventList[i] = eventList[j];
@@ -969,7 +1064,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
         //In both case a move is made and evCount is reset to zero
         while (evCount < data->n_of_events && timer.elapsedTime(Timer::VIRTUAL) < timeLimit) {
             i = (i + 1) % data->n_of_events; //next event
-
+            // get current penalty
             int currentHcv = eventHcv(eventList[i]);
             int currentScv = eventScv(eventList[i]);
             if ((currentHcv == 0 && hcv != 0) || (hcv == 0 && currentScv == 0)) { // if the event on the list does not cause any hcv
@@ -984,16 +1079,17 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
                 if (timer.elapsedTime(Timer::VIRTUAL) > timeLimit)
                     break;
                 if (rg->next() < prob1) { // with given probability			
+                    // create neighbourhood by move1
                     neighbourSolution->copy(this);
                     neighbourSolution->Move1(eventList[i], t);
+                    // find neighbourhood's HCV
                     int neighbourAffectedHcv = neighbourSolution->eventAffectedHcv(eventList[i]) + neighbourSolution->affectedRoomInTimeslotHcv(t_orig);
                     int currentAffectedHcv = eventAffectedHcv(eventList[i]) + affectedRoomInTimeslotHcv(t);
                     int delta1Hcv = neighbourAffectedHcv - currentAffectedHcv;
                     int newHcv = hcv + delta1Hcv;
-
                     if (newHcv < bestHcv) //aspiration criteria
                     {
-                        //					    cout<< "Hcv" << newHcv << endl;
+                        // if neighbourhood get hcv better than current
                         copy(neighbourSolution);
                         hcv = newHcv;
                         setTabu(move(i), tabuList, iterCount);
@@ -1008,6 +1104,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
                         break;
                     } else if (newHcv == 0) {
                         int newScv;
+                        // find neighbourhood's SCV
                         if (hcv == 0) {
                             int neighbourScv = neighbourSolution->eventScv(eventList[i]) + // respectively Scv involving event e
                                     singleClassesScv(eventList[i]) - // + single classes introduced in day of original timeslot
@@ -1021,6 +1118,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
 
                         if (newScv < bestScv) //aspiration criteria
                         {
+                            // if neighbourhood get scv better than current
                             copy(neighbourSolution);
                             hcv = newHcv;
                             scv = newScv;
@@ -1030,11 +1128,13 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
                             foundbetter = true;
                             bestMove.reset();
                             break;
-                        } else if (!tabu(i, tabuList, alfa, iterCount) && bestMove.Scv > newScv) {//memorize the best found non improving neighbouring solution
+                        } else if (!tabu(i, tabuList, alfa, iterCount) && bestMove.Scv > newScv) {
+                            //memorize the best found non improving neighbouring solution
                             bestNeighbourSolution->copy(neighbourSolution);
                             bestMove.reset(i, -1, 0, newScv);
                         }
                     } else if (!tabu(i, tabuList, alfa, iterCount) && bestMove.Hcv > newHcv) {
+                        //memorize the best found non improving neighbouring solution
                         bestNeighbourSolution->copy(neighbourSolution);
                         bestMove.reset(i, -1, newHcv);
                     }//end if					
@@ -1054,10 +1154,11 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
                         break;
                     if (rg->next() < prob2) { // with given probability
                         //Solution *neighbourSolution = new Solution( data, rg );
+                        // create neighbourhood by move2
                         neighbourSolution->copy(this);
                         neighbourSolution->Move2(eventList[i], eventList[j]);
-
                         int newHcv;
+                        // find neighbourhood's HCV
                         if (hcv == 0) //if feasible
                         {
                             newHcv = neighbourSolution->eventAffectedHcv(eventList[i]) +
@@ -1069,10 +1170,9 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
                             int delta2Hcv = neighbourAffectedHcv - currentAffectedHcv;
                             newHcv = hcv + delta2Hcv;
                         }
-
-
                         if (newHcv < bestHcv) //aspiration criteria						
                         {
+                            // if neighbourhood get hcv better than current
                             copy(neighbourSolution);
                             // cout<< "Hcv" << newHcv << endl;
                             hcv = newHcv;
@@ -1089,6 +1189,7 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
                         } else if (newHcv == 0) {// only if no hcv are introduced by the move
 
                             int newScv;
+                            // find neighbourhood's SCV
                             if (hcv == 0) {
                                 // compute alterations on scv for neighbour solution
                                 int neighbourScv = neighbourSolution->eventScv(eventList[i]) +
@@ -1104,10 +1205,9 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
                                 neighbourSolution->computeScv();
                                 newScv = neighbourSolution->scv;
                             }
-
-
                             if (newScv < bestScv) //aspiration criteria
                             {
+                                // if neighbourhood get scv better than current
                                 copy(neighbourSolution);
                                 hcv = newHcv;
                                 scv = newScv;
@@ -1117,11 +1217,13 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
                                 foundbetter = true;
                                 bestMove.reset();
                                 break;
-                            } else if (!tabu(move(i, j), tabuList, alfa, iterCount) && bestMove.Scv > newScv) {//memorize the best found non improving neighbouring solution
+                            } else if (!tabu(move(i, j), tabuList, alfa, iterCount) && bestMove.Scv > newScv) {
+                                //memorize the best found non improving neighbouring solution
                                 bestNeighbourSolution->copy(neighbourSolution);
                                 bestMove.reset(i, j, 0, newScv);
                             }
                         } else if (bestMove.Hcv > newHcv && !tabu(move(i, j), tabuList, alfa, iterCount)) {
+                            //memorize the best found non improving neighbouring solution
                             bestNeighbourSolution->copy(neighbourSolution);
                             bestMove.reset(i, j, newHcv);
                         }//end if						
@@ -1137,14 +1239,14 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
             evCount++; //event counter			
 
         }//end while(2)
-
-
         if (!bestMove.empty()) {
+            // apply a current-solution with best neighbour solution
             copy(bestNeighbourSolution);
             hcv = bestMove.Hcv;
             scv = bestMove.Scv;
             setTabu(bestMove, tabuList, iterCount);
         } else if (timer.elapsedTime(Timer::VIRTUAL) < timeLimit) {
+            // if not the end!! -- make the different with random Move
             randomMove();
             computeHcv();
             if (hcv == 0) {
@@ -1163,34 +1265,52 @@ void Solution::tabuSearch(double timeLimit, double a, double prob1, double prob2
     delete []tabuList;
 
 }//end tabu search
-
+/**
+ * Is move in the tabu list
+ * @param m is move
+ * @param tabuList is tabu-list
+ * @param alfa is alfa parameter
+ * @param iterCount is iteration
+ * @return boolean is move in the tabu list
+ */
 bool Solution::tabu(move m, int *tabuList, double alfa, int iterCount) {
     if (tabuList[m.x] + (int) (alfa * (double) (data->n_of_events)) - rg->next() * 0 > iterCount)
         return true;
     return false;
 }
-
+/**
+ * Register move to tabu-list
+ * @param m is move
+ * @param tabuList is tabu-list
+ * @param iterCount is iteration
+ */
 void Solution::setTabu(move m, int *tabuList, int iterCount) {
     tabuList[m.x] = iterCount;
     if (m.y >= 0)
         tabuList[m.x] = iterCount;
 }
-
+/**
+ * Local search (LS2) is resolve SCV1 that is last day's last time-slot
+ * @param maxSteps is maximum step to run local-search
+ * @param LS_limit is maximum time to run local-search
+ * @param prob1 is probability to use move1
+ */
 void Solution::LS2(int maxSteps, double LS_limit, double prob1) {
-
+    // compute feasibility
     computeFeasibility();
     if (feasible && scv != 0) {
         timer.resetTime();
         int lastTimeList[5];
         vector<int> evList;
+        // get events are using a last time-slot
         for (int d = 0; d < 5; d++) {
             lastTimeList[d] = (9 * d) + 8;
             for (int k = 0; k < (int) timeslot_events[lastTimeList[d]].size(); k++) {
                 evList.push_back(timeslot_events[lastTimeList[d]][k]);
             }
         }
-        evList = shuffle(evList);
         // shuffle
+        evList = shuffle(evList);        
         for (int i = 0; i < 5; i++) { // scramble the list of events to obtain a random order
             int j = (int) (rg->next() * 5);
             int h = lastTimeList[i];
@@ -1198,26 +1318,32 @@ void Solution::LS2(int maxSteps, double LS_limit, double prob1) {
             lastTimeList[j] = h;
         }
         int stepCount = 0; // set step counter to zero
-        bool foundbetter = false;
+        bool foundbetter = false;        
         int nbh_hcv, nbh_scv;
+        // for each event in events that are using a last time-slot
         for (int i = 0; i < (int) evList.size(); i++) {
             if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)break;
             int t_start = (int) (rg->next() * 45);
             int currScv = eventScv(evList[i]);
+            // for each time-slot
             for (int h = 0, t = t_start; h < 45; t = ++t % 45, h++) {
                 if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)break;
                 if (t % 9 == 8) continue;
                 if (rg->next() < prob1) {
                     stepCount++;
+                    // create neighbourhood by move1
                     Solution *nbh_sol = new Solution(data, rg);
                     nbh_sol->copy(this);
                     nbh_sol->Move1(evList[i], t);
+                    // find neighbourhood's HCV
                     nbh_hcv = nbh_sol->eventAffectedHcv(evList[i]);
                     if (nbh_hcv == 0) {
+                        // find neighbourhood's SCV
                         nbh_scv = nbh_sol->eventScv(evList[i])
                                 + singleClassesScv(evList[i])
                                 - nbh_sol->singleClassesScv(evList[i]);
                         if (nbh_scv < currScv) {
+                            // if neighbourhood get scv better than current
                             copy(nbh_sol);
                             delete nbh_sol;
                             foundbetter = true;
@@ -1232,46 +1358,13 @@ void Solution::LS2(int maxSteps, double LS_limit, double prob1) {
                 continue;
             }
         }
-        //        for (int d = 0; d < 5; d++) {
-        //            if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)break;
-        //            for (int k = 0; k < (int) timeslot_events[lastTimeList[d]].size(); k++) {
-        //                int ei = timeslot_events[lastTimeList[d]][k];
-        //                if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)break;
-        //                int t_start = (int) (rg->next() * 45);
-        //                int currScv = eventScv(ei);
-        //                for (int h = 0, t = t_start; h < 45; t = ++t % 45, h++) {
-        //                    if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)break;
-        //                    if (t % 9 == 8) continue;
-        //                    //cout << "LS2 " << t << "/e" << *ei << endl;
-        //                    if (rg->next() < prob1) {
-        //                        stepCount++;
-        //                        Solution *nbh_sol = new Solution(data, rg);
-        //                        nbh_sol->copy(this);
-        //                        nbh_sol->Move1(ei, t);
-        //                        nbh_hcv = nbh_sol->eventAffectedHcv(ei);
-        //                        if (nbh_hcv == 0) {
-        //                            nbh_scv = nbh_sol->eventScv(ei)
-        //                                    + singleClassesScv(ei)
-        //                                    - nbh_sol->singleClassesScv(ei);
-        //                            if (nbh_scv < currScv) {
-        //                                copy(nbh_sol);
-        //                                delete nbh_sol;
-        //                                foundbetter = true;
-        //                                break; // break for h
-        //                            }
-        //                        }
-        //                        delete nbh_sol;
-        //                    }
-        //                }
-        //                if (foundbetter) {
-        //                    foundbetter = false;
-        //                    break;
-        //                }
-        //            }
-        //        }
     }
 }
-
+/**
+ * Shuffle vector of int
+ * @param source is vector of int
+ * @return shuffled vector of int
+ */
 vector<int> Solution::shuffle(vector<int> source) {
     vector<int> a;
     int j;
@@ -1286,7 +1379,11 @@ vector<int> Solution::shuffle(vector<int> source) {
     }
     return a;
 }
-
+/**
+ * Get equality with another solution
+ * @param a is pointer another solution
+ * @return equality
+ */
 bool Solution::equ(Solution* a) {
     for (int i = 0; i < (int) sln.size(); i++) {
         if (sln[i].first != a->sln[i].first || sln[i].second != a->sln[i].second)
