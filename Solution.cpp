@@ -560,10 +560,10 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
             // otherwise if the event in consideration caused hcv
             int currentAffectedHcv;
             // Try moves of type 1
-            int t_start = (int) (rg->next()*40); 
+            int t_start = (int) (rg->next()*45); 
             int t_orig = sln[eventList[i]].first;            
-            for (int h = 0, t = t_start; h < 40; t = (t + 1) % 40, h++) {
-                t = (t / 8) * 9 + (t % 8);
+            for (int h = 0, t = t_start; h < 45; t = (t + 1) % 45, h++) {
+//                t = (t / 8) * 9 + (t % 8);
                 if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)
                     break;
                 if (rg->next() < prob1) { // with given probability
@@ -703,9 +703,9 @@ void Solution::localSearch(int maxSteps, double LS_limit, double prob1, double p
                 continue; //go to the next event       
             }
             // otherwise try all the possible moves
-            int t_start = (int) (rg->next()*40); // try moves of type 1
-            for (int h = 0, t = t_start; h < 40; t = (t + 1) % 40, h++) {
-                t = (t / 8) * 9 + (t % 8);
+            int t_start = (int) (rg->next()*45); // try moves of type 1
+            for (int h = 0, t = t_start; h < 45; t = (t + 1) % 45, h++) {
+//                t = (t / 8) * 9 + (t % 8);
                 if (timer.elapsedTime(Timer::VIRTUAL) > LS_limit || stepCount > maxSteps)
                     break;
                 if (rg->next() < prob1) { // each with given propability

@@ -15,7 +15,7 @@ class Distance {
 public:
     Distance();
     Distance(const Distance& orig);
-    virtual ~Distance();
+    ~Distance();
     void crowdingDistanceAssignment(VectorSolution vSolution);
 
 };

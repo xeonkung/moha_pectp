@@ -50,3 +50,9 @@ void Distance::crowdingDistanceAssignment(VectorSolution vSolution) {
         }
     }
 }
+Distance::Distance(){
+    
+}
+Distance::~Distance(){
+    
+}

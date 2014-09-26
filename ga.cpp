@@ -331,7 +331,7 @@ void tabuSearch(Solution* current, Control &control, Problem* pb, bool showcost 
     best_sol->copy(current);
     //set equal to the hcv of the first found solution
     int bestHcv = current->hcv; 
-    int bestScv = bestHcv != 0 ? current->scv : 99999;
+    int bestScv = bestHcv == 0 ? current->scv : 99999;
     while (timer.elapsedTime(Timer::VIRTUAL) < timeLimit && ts_iter < max_step) {
         int evCount = 0; // counter of events considered
         // reset
