@@ -127,7 +127,7 @@ bool compareSolution(Solution * sol1, Solution * sol2) {
  * @return boolean sol1 < sol2
  */
 bool compareCrowding(Solution * a, Solution * b) {
-    return a->distance < b->distance;
+    return a->distance > b->distance;
 }
 /**
  * Show penalty value in each solution
