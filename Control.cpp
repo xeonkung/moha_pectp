@@ -451,6 +451,35 @@ Control::setCurrentCost(Solution *currentSolution) {
     }
     //}
 }
+void
+Control::setTSCurrentCost(Solution *currentSolution, int iter) {
+    //if( timeLeft() ) {
+    int currentScv = currentSolution->scv;
+    if (currentSolution->hcv == 0 && currentScv < bestScv) {
+        bestScv = currentScv;
+        bestEvaluation = currentScv;
+        double time = getTime();
+        (*os) << "best " << bestScv;
+        (*os) << "<";
+        for (int j = 0; j < Solution::obj_N; j++) {
+            (*os) << currentSolution->objective[j] << ", ";
+        }
+        (*os) << ">";
+        (*os) << " time ";
+        os->flags(ios::fixed);
+        (*os) << (time < 0 ? 0.0 : time) << " Iteration: " << iter << endl;
+    } else if (currentSolution->hcv != 0) {
+        int currentEvaluation = (currentSolution->computeHcv() * 1000000 + currentSolution->computeScv());
+        if (currentEvaluation < bestEvaluation) {
+            bestEvaluation = currentEvaluation;
+            double time = getTime();
+            (*os) << "best " << bestEvaluation << " time ";
+            os->flags(ios::fixed);
+            (*os) << (time < 0 ? 0.0 : time) << " Iteration: " << iter << endl;
+        }
+    }
+    //}
+}
 /**
  * 
  * Set a end point & show result

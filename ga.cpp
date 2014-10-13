@@ -336,8 +336,8 @@ void tabuSearch(Solution* current, Control &control, Problem* pb, bool showcost 
         int evCount = 0; // counter of events considered
         // reset
         bestMove[0] = -1;   // event index
-        bestMove[1] = 9999; // hcv
-        bestMove[2] = 9999; // scv
+        bestMove[1] = 99999; // hcv
+        bestMove[2] = 99999; // scv
         ts_iter++;
         while (evCount < pb->n_of_events && timer.elapsedTime(Timer::VIRTUAL) < timeLimit && ts_iter < max_step) {
             i = (i + 1) % pb->n_of_events; //next event
@@ -378,9 +378,9 @@ void tabuSearch(Solution* current, Control &control, Problem* pb, bool showcost 
                         foundbetter = true;
                         // reset
                         bestMove[0] = -1;
-                        bestMove[1] = 9999;
-                        bestMove[2] = 9999;
-                        if (showcost) control.setCurrentCost(current);
+                        bestMove[1] = 99999;
+                        bestMove[2] = 99999;
+                        if (showcost) control.setTSCurrentCost(current, ts_iter);
                         break;
                     } else if (newHcv == 0) {
                         // if neighbour's HCV is 0
@@ -409,9 +409,9 @@ void tabuSearch(Solution* current, Control &control, Problem* pb, bool showcost 
                             foundbetter = true;
                             // reset
                             bestMove[0] = -1;
-                            bestMove[1] = 9999;
-                            bestMove[2] = 9999;
-                            if (showcost) control.setCurrentCost(current);
+                            bestMove[1] = 99999;
+                            bestMove[2] = 99999;
+                            if (showcost) control.setTSCurrentCost(current, ts_iter);
                             break;
                         } else if ((tabuList[i] + ts_size) <= ts_iter && newScv < bestMove[2]) {
                             // memorize the best found non improving neighbouring solution
@@ -425,7 +425,7 @@ void tabuSearch(Solution* current, Control &control, Problem* pb, bool showcost 
                         best_nbh_sol->copy(nbh_sol);
                         bestMove[0] = i;
                         bestMove[1] = newHcv;
-                        bestMove[2] = 9999;
+                        bestMove[2] = 99999;
                     }
                 }
             }
@@ -467,9 +467,9 @@ void tabuSearch(Solution* current, Control &control, Problem* pb, bool showcost 
                         foundbetter = true;
                         // reset
                         bestMove[0] = -1;
-                        bestMove[1] = 9999;
-                        bestMove[2] = 9999;
-                        if (showcost) control.setCurrentCost(current);
+                        bestMove[1] = 99999;
+                        bestMove[2] = 99999;
+                        if (showcost) control.setTSCurrentCost(current, ts_iter);
                         break;
                     } else if (newHcv == 0) {
                         // only if no hcv are introduced by the move
@@ -502,9 +502,9 @@ void tabuSearch(Solution* current, Control &control, Problem* pb, bool showcost 
                             foundbetter = true;
                             // reset
                             bestMove[0] = -1;
-                            bestMove[1] = 9999;
-                            bestMove[2] = 9999;
-                            if (showcost) control.setCurrentCost(current);
+                            bestMove[1] = 99999;
+                            bestMove[2] = 99999;
+                            if (showcost) if (showcost) control.setTSCurrentCost(current, ts_iter);
                             break;
                         } else if ((tabuList[i] + ts_size) <= ts_iter && newScv < bestMove[2]) {
                             //memorize the best found non improving neighbouring solution
@@ -518,7 +518,7 @@ void tabuSearch(Solution* current, Control &control, Problem* pb, bool showcost 
                         best_nbh_sol->copy(nbh_sol);
                         bestMove[0] = i;
                         bestMove[1] = newHcv;
-                        bestMove[2] = 9999;
+                        bestMove[2] = 99999;
                     }
                 }
             }
@@ -542,12 +542,12 @@ void tabuSearch(Solution* current, Control &control, Problem* pb, bool showcost 
             current->computeHcv();
             if (current->hcv == 0) {
                 current->computeScv();
-                if (showcost) control.setCurrentCost(current);
+                if (showcost) control.setTSCurrentCost(current, ts_iter);
             }
         }
     }
     current->copy(best_sol);
-    //cout << "TS:" << ts_iter << "\t/" << timer.elapsedTime(Timer::VIRTUAL) << "\t";
+    control.getOutputStream() << "TS total Iteration:" << ts_iter << endl;
     delete nbh_sol;
     delete best_nbh_sol;
     delete best_sol;
@@ -809,6 +809,7 @@ void tabuSearchMO(VectorSolution &archiveSet, int archSize, Control &control, Pr
  * @param control is Control instamce
  */
 void MOGA(Control &control) {
+//    cout << "Start MOGA" << endl;
     // get output stream from control instance
     ostream& os = control.getOutputStream();
     // get population size
@@ -901,6 +902,7 @@ void MOGA(Control &control) {
  * @param control is Control instance
  */
 void GA(Control &control) {
+//    cout << "Start GA" << endl;
     // get population size
     int popSize = control.getPOPSize();
     // get problem instance
@@ -977,6 +979,7 @@ void GA(Control &control) {
  * @param control is control instance
  */
 void TS(Control &control) {
+//    cout << "Start TS" << endl;
     // get problem instance
     Problem *problem = new Problem(control.getInputStream());
     // set random instance
@@ -1000,11 +1003,11 @@ void TS(Control &control) {
     delete rnd;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv) {    
     Control control(argc, argv);
-    if (control.getMethod() / 100 == 1) MOGA(control);
+    if (control.getMethod() / 300 == 1) TS(control);
     else if (control.getMethod() / 200 == 1) GA(control);
-    else if (control.getMethod() / 300 == 1) TS(control);
+    else if (control.getMethod() / 100 == 1) MOGA(control);
 }
 
 

@@ -56,7 +56,7 @@ public:
 	void endTry(Solution*); // end a run
 	void endTry(VectorSolution);
 	void setCurrentCost(Solution* ); // tell control the quality of your solution
-	
+	void setTSCurrentCost(Solution* , int);
 	istream& getInputStream() { return *is; } // get the input stream for constructing problems
 	ostream& getOutputStream() { return *os; } // get the output stream used for writing output data
 	int getSeed() { return seed; } // get the seed for the random number generator
