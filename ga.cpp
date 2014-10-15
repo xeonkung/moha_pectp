@@ -504,7 +504,7 @@ void tabuSearch(Solution* current, Control &control, Problem* pb, bool showcost 
                             bestMove[0] = -1;
                             bestMove[1] = 99999;
                             bestMove[2] = 99999;
-                            if (showcost) if (showcost) control.setTSCurrentCost(current, ts_iter);
+                            if (showcost) control.setTSCurrentCost(current, ts_iter);
                             break;
                         } else if ((tabuList[i] + ts_size) <= ts_iter && newScv < bestMove[2]) {
                             //memorize the best found non improving neighbouring solution
@@ -547,7 +547,7 @@ void tabuSearch(Solution* current, Control &control, Problem* pb, bool showcost 
         }
     }
     current->copy(best_sol);
-    control.getOutputStream() << "TS total Iteration:" << ts_iter << endl;
+    if (showcost) control.getOutputStream() << "TS total Iteration:" << ts_iter << endl;
     delete nbh_sol;
     delete best_nbh_sol;
     delete best_sol;
