@@ -918,10 +918,10 @@ void GA(Control &control) {
         for (int i = 0; i < popSize; i++) {
             pop.push_back(new Solution(problem, rnd));
             pop[i]->RandomInitialSolution();
-            if (control.flag["LS1"] || control.flag["LS1E"])
-                pop[i]->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3(), control.flag["LS1E"]);
-            if (control.flag["LS2"])
-                pop[i]->LS2(control.getMaxSteps(), control.getTimeLimit());
+            //if (control.flag["LS1"] || control.flag["LS1E"])
+            //    pop[i]->localSearch(control.getMaxSteps(), control.getTimeLimit(), control.getProb1(), control.getProb2(), control.getProb3(), control.flag["LS1E"]);
+            //if (control.flag["LS2"])
+            //    pop[i]->LS2(control.getMaxSteps(), control.getTimeLimit());
             // calculate penalty value
             pop[i]->computePenalty();
         }
